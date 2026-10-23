@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>像素坦克大战 · XBuilder</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="stage">
+      <canvas id="game" width="640" height="480"></canvas>
+
+      <div id="hud" class="hidden">
+        <div id="hud-top" class="hud-box"></div>
+        <div id="hud-equip" class="hud-box"></div>
+        <div id="hud-wave" class="hud-box"></div>
+        <div id="minimap-wrap"><canvas id="minimap" width="160" height="120"></canvas></div>
+      </div>
+
+      <div id="menu" class="overlay">
+        <h1>PIXEL TANK</h1>
+        <p class="sub">经典坦克大战 · 弹射光束 · 随机装备</p>
+        <div class="row">
+          <button class="pick on" data-mode="classic">经典 · 清光人机</button>
+          <button class="pick" data-mode="rogue">肉鸽 · 无尽刷新</button>
+        </div>
+        <div class="row">
+          <button class="pick on" data-players="2">1v1 · 2×2 地图</button>
+          <button class="pick" data-players="4">4 人混战 · 4×4</button>
+          <button class="pick" data-players="8">8 人混战 · 6×6</button>
+        </div>
+        <button id="startBtn" class="primary">开始战斗</button>
+        <div class="gear-guide">
+          <div class="gear-title">装备说明 · 每 15 秒刷新一件，30 秒未拾取消失</div>
+          <div class="gear-grid">
+            <div class="gear"><i style="background: #ff5ec4"></i><b>激光</b><span>3 次 · 瞬发光线 · 反弹 4 次</span></div>
+            <div class="gear"><i style="background: #7ef9ff"></i><b>穿透激光</b><span>1 次 · 蓄力 1 秒 · 破墙贯穿</span></div>
+            <div class="gear"><i style="background: #ffd166"></i><b>霰弹</b><span>5 次 · 三连发 · 各反弹 6 次</span></div>
+            <div class="gear"><i style="background: #9dff6e"></i><b>快速射击</b><span>10 秒 · 0.3 秒一发 · 反弹 4 次</span></div>
+            <div class="gear"><i style="background: #7aa2ff"></i><b>无敌</b><span>10 秒 · 免疫全部攻击</span></div>
+            <div class="gear"><i style="background: #ff8a5c"></i><b>反甲</b><span>10 秒 · 伤害反弹给攻击者</span></div>
+          </div>
+        </div>
+        <p class="hint">WASD / 方向键 八方向移动　J / 空格 开火　Esc 暂停</p>
+        <p class="hint dim">默认弹丸：1 秒一发、可反弹 4 次　·　一发致命</p>
+      </div>
+
+      <div id="pause" class="overlay hidden">
+        <h2>暂停</h2>
+        <button id="resumeBtn" class="primary">继续</button>
+        <div class="row">
+          <button id="pauseRestartBtn" class="pick">重新开局</button>
+          <button id="pauseMenuBtn" class="pick">返回菜单</button>
+        </div>
+      </div>
+
+      <div id="over" class="overlay hidden">
+        <h2 id="resultTitle">战果</h2>
+        <p id="resultStats" class="sub"></p>
+        <button id="againBtn" class="primary">再来一局</button>
+        <button id="menuBtn" class="pick">返回菜单</button>
+      </div>
+
+      <div id="toast" class="toast"></div>
+    </main>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

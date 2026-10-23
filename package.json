@@ -1,0 +1,11 @@
+{
+  "name": "xbuilder-tank-battle",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "经典坦克大战 · 弹射光束与随机装备",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node tests/smoke.mjs"
+  }
+}

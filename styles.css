@@ -1,0 +1,258 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #05050a;
+  --line: #2b2b3f;
+  --ink: #e9e9f5;
+  --dim: #8b8ba6;
+  --hi: #ffd166;
+  --panel: rgba(10, 10, 18, 0.88);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 0%, #151528, #04040a 65%);
+  color: var(--ink);
+  font-family: "Cascadia Mono", Consolas, "Microsoft YaHei", monospace;
+  user-select: none;
+}
+
+#stage {
+  position: relative;
+  width: min(96vw, 128vh);
+  aspect-ratio: 4 / 3;
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #0a0a12;
+  border: 2px solid var(--line);
+  box-shadow: 0 0 0 1px #000, 0 24px 60px rgba(0, 0, 0, 0.7);
+  image-rendering: pixelated;
+}
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.hud-box {
+  position: absolute;
+  min-width: 132px;
+  padding: 6px 9px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+#hud-top {
+  top: 10px;
+  left: 10px;
+}
+
+#hud-equip {
+  bottom: 10px;
+  left: 10px;
+}
+
+#hud-wave {
+  top: 10px;
+  right: 10px;
+  text-align: right;
+}
+
+.lbl {
+  color: var(--dim);
+}
+
+#minimap-wrap {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid var(--line);
+  background: #06060c;
+  line-height: 0;
+}
+
+#minimap {
+  display: block;
+  width: 132px;
+  height: 99px;
+  image-rendering: pixelated;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(4, 4, 9, 0.9);
+}
+
+.hidden {
+  display: none !important;
+}
+
+h1 {
+  font-size: clamp(24px, 4.4vw, 40px);
+  letter-spacing: 6px;
+  color: var(--hi);
+  text-shadow: 0 0 18px rgba(255, 209, 102, 0.35);
+}
+
+h2 {
+  font-size: clamp(20px, 3.2vw, 30px);
+  letter-spacing: 3px;
+}
+
+.sub {
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.hint.dim {
+  color: var(--dim);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: #12121e;
+  color: var(--dim);
+  padding: 8px 14px;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+
+button:hover {
+  color: var(--ink);
+  border-color: #4a4a68;
+}
+
+.pick.on {
+  color: var(--hi);
+  border-color: var(--hi);
+  background: #1e1a0e;
+}
+
+.primary {
+  min-width: 190px;
+  padding: 10px 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #17130a;
+  background: var(--hi);
+  border-color: var(--hi);
+}
+
+.primary:hover {
+  color: #17130a;
+  background: #ffdc85;
+  border-color: #ffdc85;
+}
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  z-index: 20;
+  padding: 10px 18px;
+  background: rgba(8, 8, 14, 0.96);
+  border: 1px solid var(--hi);
+  color: var(--hi);
+  font-size: 13px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.overlay {
+  overflow-y: auto;
+}
+
+.gear-guide {
+  width: min(560px, 92%);
+  padding: 8px 10px 10px;
+  border: 1px solid var(--line);
+  background: rgba(8, 8, 14, 0.72);
+  text-align: left;
+}
+
+.gear-title {
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.gear-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 14px;
+}
+
+.gear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.gear i {
+  display: block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+}
+
+.gear b {
+  flex: none;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.gear span {
+  color: var(--dim);
+}
