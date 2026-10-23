@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { TILE, TANK, BASE_COLS, BASE_ROWS, PLAYERS, WEAPONS, DEFAULT_BOUNCE, DIRS, dirFromAxes } from '../src/config.js';
+import { TILE, TANK, BASE_COLS, BASE_ROWS, PLAYERS, WEAPONS, DEFAULT_BOUNCE, DIRS, dirFromAxes, TANK_TYPES } from '../src/config.js';
 import {
   createMap,
   spawnTiles,
@@ -37,8 +37,8 @@ function fakeGame(map, tanks) {
     now: 1000,
     shake: 0,
     hits: [],
-    hitTank(target, attacker) {
-      this.hits.push({ target, attacker });
+    hitTank(target, attacker, damage) {
+      this.hits.push({ target, attacker, damage });
     },
   };
 }
@@ -80,8 +80,9 @@ tank.weapon = { type: 'laser', usesLeft: 1, expiresAt: 0 };
 tank.dir = 1;
 tank.fireAt = 0;
 tickFire(game2, tank, game2.now, true);
-assert.equal(game2.hits.length, 1, 'laser kills the first tank on its path');
 assert.equal(game2.hits[0].target, t2);
+assert.equal(game2.hits.length, 5, 'laser damages per pass, each bounce counts as a new hit');
+assert.ok(game2.hits.every((h) => h.damage === tank.damage), 'laser carries shooter damage');
 assert.equal(tank.weapon, null, 'last laser use clears the weapon');
 
 const pmap = blankMap(12, 6);
@@ -190,5 +191,33 @@ for (const [vx, vy, expected] of axisCases) {
     assert.ok(Math.sign(dx) === Math.sign(vx) && Math.sign(dy) === Math.sign(vy), `dir ${dir} matches axes ${vx},${vy}`);
   }
 }
+
+const balance = new Tank(0, 0, { type: 'balance' });
+const speeder = new Tank(0, 0, { type: 'speed' });
+const tanky = new Tank(0, 0, { type: 'defense' });
+assert.deepEqual(
+  [balance.maxHp, balance.damage, balance.speed()],
+  [1, 1, 120],
+  'balance preset'
+);
+assert.deepEqual([speeder.maxHp, speeder.damage, speeder.speed()], [2, 0.5, 240], 'speed preset');
+assert.deepEqual([tanky.maxHp, tanky.damage, tanky.speed()], [2, 1, 60], 'defense preset');
+assert.equal(Math.ceil(tanky.maxHp / balance.damage), 2, 'balance kills defense in 2 hits');
+assert.equal(Math.ceil(speeder.maxHp / balance.damage), 2, 'balance kills speed in 2 hits');
+assert.equal(Math.ceil(tanky.maxHp / speeder.damage), 4, 'speed kills defense in 4 hits');
+
+const botTank = new Tank(0, 0, { type: 'balance', speed: 96 });
+assert.equal(botTank.speed(), 96, 'bot speed override');
+
+const fastMap = blankMap(20, 10);
+const fastTank = new Tank(TILE * 2, TILE * 5, { type: 'speed' });
+fastTank.step(1, 240, fastMap, [fastTank]);
+assert.ok(Math.abs(fastTank.x - (TILE * 2 + 240)) < 1e-6, 'speed tank moves 240px without tunneling');
+
+const tunnelMap = blankMap(20, 10);
+setTile(tunnelMap, 8, 5, 1);
+const tunnelTank = new Tank(TILE * 2, TILE * 5 + 16, { type: 'speed' });
+tunnelTank.step(1, 240, tunnelMap, [tunnelTank]);
+assert.ok(tunnelTank.x + TANK / 2 <= 8 * TILE + 0.5, 'fast tank does not tunnel through walls');
 
 console.log('smoke ok');

@@ -32,7 +32,13 @@ export function dirFromAxes(vx, vy) {
   return DIR_BY_AXIS[vy + 1][vx + 1];
 }
 
-export const SPEED = { player: 120, bot: 96 };
+export const BOT_SPEED = 96;
+
+export const TANK_TYPES = {
+  balance: { label: '平衡型', hp: 1, damage: 1, speed: 120, desc: '1 血 · 标准速度 · 标准伤害' },
+  speed: { label: '速度型', hp: 2, damage: 0.5, speed: 240, desc: '2 血 · 双倍速度 · 半伤' },
+  defense: { label: '防御型', hp: 2, damage: 1, speed: 60, desc: '2 血 · 半速 · 标准伤害' },
+};
 export const BULLET_SPEED = 300;
 export const BULLET_R = 4;
 export const DEFAULT_FIRE_MS = 1000;

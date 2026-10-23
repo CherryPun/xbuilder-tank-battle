@@ -182,6 +182,12 @@ function drawTank(ctx, t, now) {
     ctx.stroke();
     ctx.setLineDash([]);
   }
+  if (t.flashUntil > now) {
+    ctx.globalAlpha = Math.max(0, (t.flashUntil - now) / 110) * 0.8;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(cx - half, cy - half, s, s);
+    ctx.globalAlpha = 1;
+  }
   if (t.chargeAt) {
     const p = Math.min(1, (now - t.chargeAt) / WEAPONS.pierce.chargeMs);
     ctx.strokeStyle = WEAPONS.pierce.color;
