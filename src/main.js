@@ -13,6 +13,8 @@ import {
   BOT_SPAWN_MS,
   BOT_COLORS,
   PLAYER_COLOR,
+  BOT_SPEED,
+  TANK_TYPES,
   dirFromAxes,
 } from './config.js';
 import { createMap, spawnTiles, tileCenter, wallAt, reflectAxes, reachableSet, randomEmptyTile } from './map.js';
@@ -71,9 +73,10 @@ class Game {
     this.godMode = false;
   }
 
-  start(playerCount, mode) {
+  start(playerCount, mode, playerType = 'balance') {
     this.playerCount = playerCount;
     this.mode = mode;
+    this.playerType = TANK_TYPES[playerType] ? playerType : 'balance';
     const { scale, bots } = PLAYERS[playerCount];
     const cols = BASE_COLS * scale;
     const rows = BASE_ROWS * scale;
@@ -99,7 +102,12 @@ class Game {
     this.botCap = bots;
 
     const home = tileCenter(map, spawns[0].c, spawns[0].r);
-    this.player = new Tank(home.x, home.y, { isPlayer: true, color: PLAYER_COLOR, name: '你' });
+    this.player = new Tank(home.x, home.y, {
+      isPlayer: true,
+      color: PLAYER_COLOR,
+      name: '你',
+      type: this.playerType,
+    });
     this.tanks.push(this.player);
     const placed = [{ x: home.x, y: home.y }];
     for (let i = 0; i < bots; i++) {
@@ -109,7 +117,14 @@ class Game {
         randomEmptyTile(map);
       if (!pos) break;
       placed.push(pos);
-      this.tanks.push(new Tank(pos.x, pos.y, { color: BOT_COLORS[i % BOT_COLORS.length], name: `AI-${i + 1}` }));
+      this.tanks.push(
+        new Tank(pos.x, pos.y, {
+          color: BOT_COLORS[i % BOT_COLORS.length],
+          name: `AI-${i + 1}`,
+          type: 'balance',
+          speed: BOT_SPEED,
+        })
+      );
     }
 
     this.startedAt = performance.now();
@@ -192,7 +207,7 @@ class Game {
           if (!t.alive || t === b.owner) continue;
           if (Math.abs(t.x - b.x) <= TANK / 2 && Math.abs(t.y - b.y) <= TANK / 2) {
             b.alive = false;
-            this.hitTank(t, b.owner);
+            this.hitTank(t, b.owner, b.damage);
             break;
           }
         }
@@ -201,21 +216,32 @@ class Game {
     this.bullets = this.bullets.filter((b) => b.alive);
   }
 
-  hitTank(target, attacker) {
+  hitTank(target, attacker, damage = attacker ? attacker.damage : 1) {
     if (!target.alive) return;
     if (target.isPlayer && this.godMode) return;
     if (target.shieldUntil > this.now) return;
     if (target.thornsUntil > this.now) {
-      if (attacker && attacker !== target && attacker.alive) this.killTank(attacker, target);
+      if (attacker && attacker !== target && attacker.alive) this.damageTank(attacker, damage, target);
       return;
     }
-    this.killTank(target, attacker);
+    this.damageTank(target, damage, attacker);
+  }
+
+  damageTank(t, amount, killer) {
+    if (!t.alive || !(amount > 0)) return;
+    if (t.isPlayer && this.godMode) return;
+    if (t.shieldUntil > this.now) return;
+    t.hp = Math.max(0, t.hp - amount);
+    t.flashUntil = this.now + 110;
+    if (t.hp > 0) return;
+    this.killTank(t, killer);
   }
 
   killTank(t, killer) {
     if (!t.alive) return;
     if (t.isPlayer && this.godMode) return;
     if (t.shieldUntil > this.now) return;
+    t.hp = 0;
     t.alive = false;
     t.weapon = null;
     t.chargeAt = 0;
@@ -282,7 +308,14 @@ class Game {
     const avoid = this.tanks.filter((t) => t.alive).map((t) => ({ x: t.x, y: t.y }));
     const pos = randomEmptyTile(this.map, avoid, TILE * 4) || randomEmptyTile(this.map, avoid, TILE * 2);
     if (!pos) return;
-    this.tanks.push(new Tank(pos.x, pos.y, { color: BOT_COLORS[this.tanks.length % BOT_COLORS.length], name: 'AI' }));
+    this.tanks.push(
+      new Tank(pos.x, pos.y, {
+        color: BOT_COLORS[this.tanks.length % BOT_COLORS.length],
+        name: 'AI',
+        type: 'balance',
+        speed: BOT_SPEED,
+      })
+    );
   }
 
   checkWin() {
@@ -314,6 +347,7 @@ const hudWave = document.getElementById('hud-wave');
 
 let pickedMode = 'classic';
 let pickedPlayers = 2;
+let pickedType = 'balance';
 
 document.querySelectorAll('[data-mode]').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -326,6 +360,15 @@ document.querySelectorAll('[data-players]').forEach((btn) => {
   btn.addEventListener('click', () => {
     pickedPlayers = Number(btn.dataset.players);
     document.querySelectorAll('[data-players]').forEach((x) => x.classList.toggle('on', x === btn));
+  });
+});
+
+document.querySelectorAll('[data-type]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    pickedType = btn.dataset.type;
+    document.querySelectorAll('[data-type]').forEach((x) => x.classList.toggle('on', x === btn));
+    const preset = TANK_TYPES[pickedType];
+    document.getElementById('typeDesc').textContent = preset.desc;
   });
 });
 
@@ -342,7 +385,7 @@ function startGame() {
   overEl.classList.add('hidden');
   pauseEl.classList.add('hidden');
   hudEl.classList.remove('hidden');
-  game.start(pickedPlayers, pickedMode);
+  game.start(pickedPlayers, pickedMode, pickedType);
 }
 
 function toMenu() {
@@ -451,6 +494,8 @@ window.addEventListener('blur', () => {
 function updateHud(g) {
   const p = g.player;
   hudTop.innerHTML = `<b>${MODES[g.mode].label}</b> · ${PLAYERS[g.playerCount].label}<br>人机 ${g.aliveBots()}/${g.botCap} · 击杀 ${g.kills}`;
+  const preset = TANK_TYPES[p.type];
+  const hpPips = '■'.repeat(Math.max(0, Math.ceil(p.hp))) + '□'.repeat(Math.max(0, p.maxHp - Math.ceil(p.hp)));
   const lines = [];
   if (!p.alive) {
     lines.push('已阵亡');
@@ -469,7 +514,7 @@ function updateHud(g) {
     if (p.thornsUntil > g.now) lines.push(`反甲 ${Math.ceil((p.thornsUntil - g.now) / 1000)}s`);
     if (p.chargeAt) lines.push('穿透激光蓄力中…');
   }
-  hudEquip.innerHTML = `<span class="lbl">装备</span><br>${lines.join('<br>')}`;
+  hudEquip.innerHTML = `<span class="lbl">${preset.label}</span> ${hpPips}<br>${lines.join('<br>')}`;
   const next = Math.max(0, Math.ceil((ITEM_SPAWN_MS - (g.now - g.itemTimer)) / 1000));
   hudWave.innerHTML = `装备刷新 ${next}s<br>场上 ${g.items.length}`;
 }

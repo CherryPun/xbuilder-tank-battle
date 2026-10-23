@@ -50,7 +50,7 @@ function spawnBullet(game, tank, bounce, color, offset = 0) {
   const [dx, dy] = DIRS[tank.dir];
   const x = tank.x + dx * (TANK / 2 + BULLET_R) - dy * offset;
   const y = tank.y + dy * (TANK / 2 + BULLET_R) + dx * offset;
-  game.bullets.push(new Bullet(x, y, tank.dir, { owner: tank, bounce, color }));
+  game.bullets.push(new Bullet(x, y, tank.dir, { owner: tank, bounce, color, damage: tank.damage }));
 }
 
 function fireShotgun(game, tank) {
@@ -74,7 +74,7 @@ function fireLaser(game, tank) {
   let bounces = WEAPONS.laser.bounce;
   let x = tank.x;
   let y = tank.y;
-  let victim = null;
+  let victims = new Set();
   for (let i = 0; i < 8000; i++) {
     const nx = x + vx * STEP;
     const ny = y + vy * STEP;
@@ -89,19 +89,18 @@ function fireLaser(game, tank) {
       if (hx) vx = -vx;
       if (hy) vy = -vy;
       bounces -= 1;
+      victims = new Set();
       continue;
     }
     x = nx;
     y = ny;
     const hit = hitTankAt(game, tank, x, y);
-    if (hit) {
-      points.push({ x, y });
-      victim = hit;
-      break;
+    if (hit && !victims.has(hit)) {
+      victims.add(hit);
+      game.hitTank(hit, tank, tank.damage);
     }
   }
   game.effects.push({ points, until: game.now + 500, color: WEAPONS.laser.color, width: 3 });
-  if (victim) game.hitTank(victim, tank);
 }
 
 function firePierce(game, tank) {
@@ -128,7 +127,7 @@ function firePierce(game, tank) {
     const cy = t.y - tank.y;
     const proj = cx * vx + cy * vy;
     if (proj < 0) continue;
-    if (Math.abs(cx * vy - cy * vx) <= half + TANK / 2) game.hitTank(t, tank);
+    if (Math.abs(cx * vy - cy * vx) <= half + TANK / 2) game.hitTank(t, tank, tank.damage);
   }
   game.effects.push({ points, until: game.now + 450, color: WEAPONS.pierce.color, width: TANK });
   game.shake = Math.max(game.shake, 7);

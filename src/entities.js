@@ -1,14 +1,20 @@
-import { DIRS, TANK, SPEED, BULLET_SPEED, DEFAULT_FIRE_MS, WEAPONS, ITEM_LIFE_MS } from './config.js';
+import { DIRS, TANK, TANK_TYPES, BULLET_SPEED, DEFAULT_FIRE_MS, WEAPONS, ITEM_LIFE_MS } from './config.js';
 import { rectHitsWall } from './map.js';
 
 export class Tank {
-  constructor(x, y, { isPlayer = false, color = '#7bd88f', name = '坦克' } = {}) {
+  constructor(x, y, { isPlayer = false, color = '#7bd88f', name = '坦克', type = 'balance', speed } = {}) {
+    const preset = TANK_TYPES[type] || TANK_TYPES.balance;
+    this.type = TANK_TYPES[type] ? type : 'balance';
     this.x = x;
     this.y = y;
     this.dir = 0;
     this.isPlayer = isPlayer;
     this.color = color;
     this.name = name;
+    this.maxHp = preset.hp;
+    this.hp = preset.hp;
+    this.damage = preset.damage;
+    this.baseSpeed = speed ?? preset.speed;
     this.alive = true;
     this.weapon = null;
     this.shieldUntil = 0;
@@ -17,10 +23,11 @@ export class Tank {
     this.chargeAt = 0;
     this.wantShoot = false;
     this.ai = null;
+    this.flashUntil = 0;
   }
 
   speed() {
-    return this.isPlayer ? SPEED.player : SPEED.bot;
+    return this.baseSpeed;
   }
 
   fireInterval() {
@@ -39,19 +46,24 @@ export class Tank {
   step(dir, dist, map, tanks) {
     this.dir = dir;
     const [dx, dy] = DIRS[dir];
-    if (dx) {
-      const nx = this.x + dx * dist;
-      if (this.canBeAt(nx, this.y, map, tanks)) this.x = nx;
-    }
-    if (dy) {
-      const ny = this.y + dy * dist;
-      if (this.canBeAt(this.x, ny, map, tanks)) this.y = ny;
+    let remain = dist;
+    while (remain > 0) {
+      const len = Math.min(remain, 6);
+      remain -= len;
+      if (dx) {
+        const nx = this.x + dx * len;
+        if (this.canBeAt(nx, this.y, map, tanks)) this.x = nx;
+      }
+      if (dy) {
+        const ny = this.y + dy * len;
+        if (this.canBeAt(this.x, ny, map, tanks)) this.y = ny;
+      }
     }
   }
 }
 
 export class Bullet {
-  constructor(x, y, dir, { owner, bounce = 0, color = '#ffe08a' } = {}) {
+  constructor(x, y, dir, { owner, bounce = 0, color = '#ffe08a', damage = 1 } = {}) {
     this.x = x;
     this.y = y;
     this.dir = dir;
@@ -60,6 +72,7 @@ export class Bullet {
     this.owner = owner;
     this.bounce = bounce;
     this.color = color;
+    this.damage = damage;
     this.speed = BULLET_SPEED;
     this.alive = true;
   }

@@ -29,6 +29,12 @@
           <button class="pick" data-players="4">4 人混战 · 4×4</button>
           <button class="pick" data-players="8">8 人混战 · 6×6</button>
         </div>
+        <div class="row">
+          <button class="pick on" data-type="balance">平衡型</button>
+          <button class="pick" data-type="speed">速度型</button>
+          <button class="pick" data-type="defense">防御型</button>
+        </div>
+        <p class="hint dim" id="typeDesc">1 血 · 标准速度 · 标准伤害</p>
         <button id="startBtn" class="primary">开始战斗</button>
         <div class="gear-guide">
           <div class="gear-title">装备说明 · 每 15 秒刷新一件，30 秒未拾取消失</div>
@@ -42,7 +48,7 @@
           </div>
         </div>
         <p class="hint">WASD / 方向键 八方向移动　J / 空格 开火　Esc 暂停</p>
-        <p class="hint dim">默认弹丸：1 秒一发、可反弹 4 次　·　一发致命</p>
+        <p class="hint dim">默认弹丸：1 秒一发、可反弹 4 次　·　人机均为平衡型</p>
       </div>
 
       <div id="pause" class="overlay hidden">
