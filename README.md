@@ -4,19 +4,39 @@
 
 ## 运行
 
-需要先起一个本地静态服务器（ES module 不能直接从 `file://` 打开）。
+环境：Node 18+（推荐）或 Python 3。必须用本地 HTTP 服务打开——直接双击 `index.html` 会因 ES module 的 CORS 限制停在空白页。
+
+1. 获取代码并进入项目根目录（该目录下能看到 `index.html` 与 `package.json`）：
 
 ```bash
-# 方式一：无需安装任何依赖（需要 Node 18+）
-npm start
-# 打开 http://localhost:8000
-
-# 方式二：用 Python
-python -m http.server 8000
-# 打开 http://localhost:8000
+git clone https://github.com/CherryPun/xbuilder-tank-battle.git
+cd xbuilder-tank-battle
 ```
 
-自定义端口：`PORT=8080 npm start`。
+2. 启动静态服务器（二选一，都在第 1 步的目录里执行）：
+
+```bash
+npm start          # 等价于 node server.mjs，无需 npm install
+```
+
+```bash
+py -3 -m http.server 8000        # Windows 用 py -3；python 在 PATH 时可用 python -m http.server 8000
+```
+
+3. 终端打印 `tank battle running: http://localhost:8000` 后，浏览器打开 http://localhost:8000 ，看到「PIXEL TANK」菜单即启动成功（没看到就 Ctrl+F5 强刷）。
+
+4. 结束时回到该终端按 `Ctrl+C`。
+
+端口 8000 被占用（报 `EADDRINUSE`）时：
+
+```powershell
+# PowerShell 换端口
+$env:PORT=8001; npm start
+
+# 或查出并结束占用进程
+Get-NetTCPConnection -LocalPort 8000 -State Listen | Select-Object OwningProcess
+Stop-Process -Id <PID>
+```
 
 ## 操作
 
