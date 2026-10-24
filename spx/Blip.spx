@@ -24,13 +24,5 @@ onCloned => {
 			}
 			continue
 		}
-		k := id - 8
-		if itemAlive[k] {
-			setCostume 2
-			show
-			setXYpos 186 + itemX[k]/240*38, -132 + itemY[k]/180*26
-		} else {
-			hide
-		}
 	}
 }

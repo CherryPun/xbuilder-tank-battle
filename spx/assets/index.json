@@ -6,7 +6,7 @@
       "bitmapResolution": 1,
       "name": "arena",
       "path": "arena.svg",
-      "builder_id": "wgwvdd02kr6ziiowc9ys8",
+      "builder_id": "msgwktzppfisps5l7imjg",
       "imageWidth": 480,
       "imageHeight": 360
     }
@@ -33,7 +33,6 @@
   "zorder": [
     "Tank",
     "Bot",
-    "Item",
     "Bullet",
     "Radar",
     "Blip",
@@ -109,20 +108,6 @@
     },
     {
       "type": "monitor",
-      "name": "m-ammo",
-      "x": -232,
-      "y": 146,
-      "size": 0.65,
-      "visible": true,
-      "builder_id": "ztb-m-ammo",
-      "label": "装备",
-      "mode": 1,
-      "style": "default",
-      "target": "",
-      "val": "ammoText"
-    },
-    {
-      "type": "monitor",
       "name": "m-status",
       "x": -232,
       "y": -172,
@@ -137,12 +122,11 @@
     }
   ],
   "builder_spriteOrder": [
-    "be8w10u1b6cm4503kkfk",
-    "ts63lb6fn7u5zj39fup8",
-    "qbuf88cutjxgbxrh9lcl",
-    "7j2igv82f627zowsbcx9s",
-    "7s8mn7cqocfj107qlrn0e",
-    "jh8g6hdmromev0ibj5o6"
+    "yf4xumima81oqvyrm5pqy",
+    "9c2s01w3mexegbzlmm2zc",
+    "8y4ndlxrz8cs6qkpuieag",
+    "r5vjx23bjqrgakaar8q4",
+    "0j3cid8g8br9bsmvgml7k"
   ],
   "builder_soundOrder": [],
   "maxFPS": 60,

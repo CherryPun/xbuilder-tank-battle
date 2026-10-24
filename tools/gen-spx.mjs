@@ -34,11 +34,6 @@ const mainSpx = `var (
 
 	tick       int
 	lastShot   int
-	rapidUntil int
-	shieldUntil int
-	thornsUntil int
-	ammoType   int
-	ammoLeft   int
 
 	playerX   float64
 	playerY   float64
@@ -50,11 +45,9 @@ const mainSpx = `var (
 	botCap    int
 	botsSpawned bool
 	blipsSpawned bool
-	itemsSpawned bool
 	bulletsSpawned bool
 	spawnID     int
 	botRefillAt int
-	itemAt      int
 
 	botX [8]float64
 	botY [8]float64
@@ -77,11 +70,6 @@ const mainSpx = `var (
 	randX float64
 	randY float64
 
-	itemX [4]float64
-	itemY [4]float64
-	itemType [4]int
-	itemAlive [4]bool
-	itemTime [4]int
 
 	godMode bool
 	konamiIdx int
@@ -90,7 +78,6 @@ const mainSpx = `var (
 	modeText    string
 	playersText string
 	typeText    string
-	ammoText    string
 )
 
 func Absf(v float64) float64 {
@@ -192,72 +179,6 @@ func MenuText() {
 	statusText = "空格开始 | 1/2/3 选坦克 | C 切模式 | X 切人数"
 }
 
-func UpdateAmmo() {
-	ammoText = "默认弹"
-	if ammoType == 1 {
-		ammoText = "激光"
-	}
-	if ammoType == 2 {
-		ammoText = "霰弹"
-	}
-	if ammoType == 3 {
-		ammoText = "快速射击"
-	}
-	if ammoType == 4 {
-		ammoText = "穿透激光"
-	}
-	if shieldUntil > tick {
-		ammoText = ammoText + " +无敌"
-	}
-	if thornsUntil > tick {
-		ammoText = ammoText + " +反甲"
-	}
-}
-
-func ApplyItem(t int) {
-	ammoType = 0
-	ammoLeft = 0
-	if t == 0 {
-		ammoType = 1
-		ammoLeft = 3
-	}
-	if t == 1 {
-		ammoType = 4
-		ammoLeft = 1
-	}
-	if t == 2 {
-		ammoType = 2
-		ammoLeft = 5
-	}
-	if t == 3 {
-		ammoType = 3
-		ammoLeft = 999
-		rapidUntil = tick + 333
-	}
-	if t == 4 {
-		shieldUntil = tick + 333
-	}
-	if t == 5 {
-		thornsUntil = tick + 333
-	}
-	UpdateAmmo
-}
-
-func SpawnItem() {
-	for i := 0; i < 4; i++ {
-		if !itemAlive[i] {
-			if PickSpot(tile * 2) {
-				itemX[i] = randX
-				itemY[i] = randY
-				itemType[i] = int(rand(0, 5))
-				itemAlive[i] = true
-				itemTime[i] = tick
-			}
-			return
-		}
-	}
-}
-
 func KonamiStep(k int) {
 	seq := [12]int{0, 0, 2, 2, 3, 1, 3, 1, 4, 5, 4, 5}
 	if konamiIdx >= 12 {
@@ -328,23 +249,13 @@ func StartGame() {
 	kills = 0
 	tick = 0
 	lastShot = -300
-	rapidUntil = 0
-	shieldUntil = 0
-	thornsUntil = 0
-	ammoType = 0
-	ammoLeft = 0
 	botCap = players - 1
 	botsAlive = 0
 	botRefillAt = 500
-	itemAt = 500
 
-	for i := 0; i < 4; i++ {
-		itemAlive[i] = false
-	}
 	for i := 0; i < 16; i++ {
 		bulletActive[i] = false
 	}
-	UpdateAmmo
 
 	for i := 0; i < 8; i++ {
 		botAlive[i] = false
@@ -400,21 +311,6 @@ func DamagePlayer(d float64) {
 	if godMode {
 		return
 	}
-	if shieldUntil > tick {
-		return
-	}
-	if thornsUntil > tick {
-		for i := 0; i < 8; i++ {
-			if botAlive[i] {
-				botHP[i] = botHP[i] - d
-				if botHP[i] <= 0 {
-					KillBot(i)
-				}
-				break
-			}
-		}
-		return
-	}
 	hp = hp - d
 	if hp <= 0 {
 		gameState = 2
@@ -450,11 +346,7 @@ func FireShot(owner int) {
 	dmg := 1.0
 	speed := tile * 0.36
 	if owner == 1 {
-		gap := 33
-		if ammoType == 3 {
-			gap = 10
-		}
-		if tick-lastShot < gap {
+		if tick-lastShot < 33 {
 			return
 		}
 		lastShot = tick
@@ -462,25 +354,6 @@ func FireShot(owner int) {
 		oy = playerY
 		bounces = 4
 		dmg = damage
-		if ammoType == 1 {
-			dmg = damage * 2
-		}
-		if ammoType == 2 {
-			bounces = 6
-			speed = tile * 0.32
-		}
-		if ammoType == 4 {
-			ghost = true
-			bounces = 0
-			dmg = damage * 2
-		}
-		if ammoLeft > 0 {
-			ammoLeft--
-			if ammoLeft <= 0 {
-				ammoType = 0
-			}
-			UpdateAmmo
-		}
 	} else {
 		ox = botX[spawnID]
 		oy = botY[spawnID]
@@ -532,26 +405,6 @@ func FireShot(owner int) {
 			vx = -speed
 		}
 	}
-	if owner == 1 && ammoType == 2 {
-		px := 0.0
-		py := 0.0
-		if playerDir == 0 {
-			px = 1
-		}
-		if playerDir == 2 {
-			px = -1
-		}
-		if playerDir == 1 {
-			py = 1
-		}
-		if playerDir == 3 {
-			py = -1
-		}
-		for k := -1; k <= 1; k++ {
-			SpawnBullet 1, ox+px*float64(k)*tile*0.28, oy+py*float64(k)*tile*0.28, vx, vy, bounces, ghost, dmg
-		}
-		return
-	}
 	SpawnBullet owner, ox, oy, vx, vy, bounces, ghost, dmg
 }
 
@@ -580,27 +433,9 @@ func GameTick() {
 		return
 	}
 	tick++
-	if rapidUntil > 0 && tick > rapidUntil {
-		rapidUntil = 0
-		if ammoType == 3 {
-			ammoType = 0
-		}
-	}
 	if mode == 1 && tick >= botRefillAt {
 		botRefillAt = tick + 500
 		RefillBots
-	}
-	if tick >= itemAt {
-		itemAt = tick + 500
-		SpawnItem
-	}
-	for i := 0; i < 4; i++ {
-		if itemAlive[i] && tick-itemTime[i] > 1000 {
-			itemAlive[i] = false
-		}
-	}
-	if tick%10 == 0 {
-		UpdateAmmo
 	}
 }
 
@@ -608,18 +443,11 @@ onStart => {
 	MenuText
 	UpdateTexts
 	if !blipsSpawned {
-		for i := 0; i < 12; i++ {
+		for i := 0; i < 8; i++ {
 			spawnID = i
 			Blip.clone
 		}
 		blipsSpawned = true
-	}
-	if !itemsSpawned {
-		for i := 0; i < 4; i++ {
-			spawnID = i
-			Item.clone
-		}
-		itemsSpawned = true
 	}
 	if !bulletsSpawned {
 		for i := 0; i < 16; i++ {
@@ -722,14 +550,6 @@ const tankSpx = `onStart => {
 			}
 		}
 		setXYpos playerX, playerY
-		for i := 0; i < 4; i++ {
-			if itemAlive[i] {
-				if Absf(playerX-itemX[i]) < tile*0.7 && Absf(playerY-itemY[i]) < tile*0.7 {
-					ApplyItem(itemType[i])
-					itemAlive[i] = false
-				}
-			}
-		}
 	}
 }
 
@@ -1047,46 +867,15 @@ const blipSpx = `onCloned => {
 			}
 			continue
 		}
-		k := id - 8
-		if itemAlive[k] {
-			setCostume 2
-			show
-			setXYpos 186 + itemX[k]/240*38, -132 + itemY[k]/180*26
-		} else {
-			hide
-		}
 	}
 }
 `;
 
-const itemSpx = `onCloned => {
-	id := spawnID
-	hide
-	for {
-		wait 0.05
-		if gameState != 1 || !itemAlive[id] {
-			hide
-			continue
-		}
-		show
-		setCostume itemType[id]
-		setSize tile * 0.8 / 22
-		setXYpos itemX[id], itemY[id]
-	}
-}
-`;
-
-const itemSvg = (color, glyph) => `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">
-  <rect x="1" y="1" width="20" height="20" rx="2" fill="#0b0b12" stroke="${color}" stroke-width="2"/>
-  ${glyph}
-</svg>
-`;
 const radarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="104" height="78" viewBox="0 0 104 78">
   <rect x="1" y="1" width="102" height="76" fill="#08080e" fill-opacity="0.72" stroke="#2b2b3f" stroke-width="2"/>
   <rect x="6" y="6" width="92" height="66" fill="none" stroke="#1f1f2e" stroke-width="1"/>
 </svg>
 `;
-
 const blipSvg = (color) => `<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 6 6">
   <rect width="6" height="6" rx="1" fill="${color}"/>
 </svg>
@@ -1154,7 +943,6 @@ const BOT_ID = id();
 const BULLET_ID = id();
 const RADAR_ID = id();
 const BLIP_ID = id();
-const ITEM_ID = id();
 
 const spriteJson = (opts) =>
   JSON.stringify(
@@ -1232,7 +1020,6 @@ const stageJson = JSON.stringify(
     zorder: [
       'Tank',
       'Bot',
-      'Item',
       'Bullet',
       'Radar',
       'Blip',
@@ -1241,10 +1028,9 @@ const stageJson = JSON.stringify(
       monitor('m-mode', '模式', 'modeText', -68, 172),
       monitor('m-players', '人数', 'playersText', 20, 172),
       monitor('m-type', '类型', 'typeText', 110, 172),
-      monitor('m-ammo', '装备', 'ammoText', -232, 146),
       monitor('m-status', '状态', 'statusText', -232, -172),
     ],
-    builder_spriteOrder: [TANK_ID, BOT_ID, ITEM_ID, BULLET_ID, RADAR_ID, BLIP_ID],
+    builder_spriteOrder: [TANK_ID, BOT_ID, BULLET_ID, RADAR_ID, BLIP_ID],
     builder_soundOrder: [],
     maxFPS: 60,
     fontPreferences: ['basic-chinese', 'default'],
@@ -1265,7 +1051,6 @@ write('Bot.spx', botSpx);
 write('Bullet.spx', bulletSpx);
 write('Radar.spx', radarSpx);
 write('Blip.spx', blipSpx);
-write('Item.spx', itemSpx);
 write('builder-meta.json', meta);
 write('assets/index.json', stageJson);
 write('assets/arena.svg', fieldSvg(1));
@@ -1286,33 +1071,10 @@ write('assets/sprites/Blip/index.json', spriteJson({
   costumes: [
     { name: 'player', path: 'green.svg', w: 6, h: 6 },
     { name: 'bot', path: 'red.svg', w: 6, h: 6 },
-    { name: 'item', path: 'gold.svg', w: 6, h: 6 },
   ],
 }));
 write('assets/sprites/Blip/green.svg', blipSvg('#7bd88f'));
 write('assets/sprites/Blip/red.svg', blipSvg('#ff6b6b'));
-write('assets/sprites/Blip/gold.svg', blipSvg('#ffd166'));
-write('assets/sprites/Item/index.json', spriteJson({
-  heading: 0,
-  x: 0,
-  y: 0,
-  visible: false,
-  builderId: ITEM_ID,
-  costumes: [
-    { name: 'laser', path: 'laser.svg', w: 22, h: 22 },
-    { name: 'pierce', path: 'pierce.svg', w: 22, h: 22 },
-    { name: 'shotgun', path: 'shotgun.svg', w: 22, h: 22 },
-    { name: 'rapid', path: 'rapid.svg', w: 22, h: 22 },
-    { name: 'shield', path: 'shield.svg', w: 22, h: 22 },
-    { name: 'thorns', path: 'thorns.svg', w: 22, h: 22 },
-  ],
-}));
-write('assets/sprites/Item/laser.svg', itemSvg('#ff5ec4', '<rect x="4" y="10" width="14" height="2" fill="#ff5ec4"/>'));
-write('assets/sprites/Item/pierce.svg', itemSvg('#7ef9ff', '<rect x="9" y="4" width="4" height="14" fill="#7ef9ff"/>'));
-write('assets/sprites/Item/shotgun.svg', itemSvg('#ffd166', '<rect x="4" y="9" width="3" height="4" fill="#ffd166"/><rect x="9" y="9" width="3" height="4" fill="#ffd166"/><rect x="14" y="9" width="3" height="4" fill="#ffd166"/>'));
-write('assets/sprites/Item/rapid.svg', itemSvg('#9dff6e', '<path d="M6 6 L11 11 L6 16" stroke="#9dff6e" stroke-width="2" fill="none"/><path d="M11 6 L16 11 L11 16" stroke="#9dff6e" stroke-width="2" fill="none"/>'));
-write('assets/sprites/Item/shield.svg', itemSvg('#7aa2ff', '<circle cx="11" cy="11" r="6" fill="none" stroke="#7aa2ff" stroke-width="2"/>'));
-write('assets/sprites/Item/thorns.svg', itemSvg('#ff8a5c', '<path d="M5 5 L17 17 M17 5 L5 17" stroke="#ff8a5c" stroke-width="2"/>'));
 
 const fontsSrc = 'C:/Users/大禧子/AppData/Local/Temp/opencode/xbp/assets/fonts';
 if (existsSync(fontsSrc)) {
