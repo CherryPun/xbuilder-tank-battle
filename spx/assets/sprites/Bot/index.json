@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "p0qwj2epwfglw95ptc6b8",
+  "builder_id": "0uciuguhi20ctn9wd3nax",
   "costumes": [
     {
       "x": 14,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "bot",
       "path": "bot.svg",
-      "builder_id": "30ti1jfxvttkioxax4ici",
+      "builder_id": "6xr71ot50gq7utrmdynf",
       "imageWidth": 28,
       "imageHeight": 28
     }
