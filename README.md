@@ -14,6 +14,10 @@
 
 架构与模块规格见 [docs/architecture.md](docs/architecture.md)。
 
+## 演示视频
+
+[demo/tank-demo.mp4](demo/tank-demo.mp4)　（1 分 39 秒，720p，约 4 MB）
+
 ## XBuilder 版
 
 1. 直接用 XBuilder 导入 `xbuilder/xbuilder-tank-battle.xbp`；若改动源码，运行 `node xbuilder/tools/gen-spx.mjs` 重新生成 `xbuilder/spx/`，再执行 `powershell -File xbuilder/tools/pack-xbp.ps1` 打包。
