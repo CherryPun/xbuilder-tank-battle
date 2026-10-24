@@ -6,7 +6,7 @@
       "bitmapResolution": 1,
       "name": "arena",
       "path": "arena.svg",
-      "builder_id": "c5jselgcu56i573sqiigk",
+      "builder_id": "86s5sh6qrru5w9m51zd7b",
       "imageWidth": 480,
       "imageHeight": 360
     }
@@ -122,11 +122,11 @@
     }
   ],
   "builder_spriteOrder": [
-    "sili7oifupkzgi9dt7fec",
-    "ptjyqkbur9f0izylulhrs",
-    "95bb38jchklmj6cbq0skn",
-    "0izkiyc3nb2vaxww0drfp",
-    "aqkkc0wfob7w7ppw2r3fe"
+    "6n1ftruz8jnu9csuhwsr",
+    "kgdpenptgxgxyuuwdhb0f",
+    "pqgnpkmg8rrb0ipktz8a",
+    "c2vjwadkc8g3r1tgfja9w",
+    "1t7j5h7hmsaci7jno7bc8"
   ],
   "builder_soundOrder": [],
   "maxFPS": 60,
