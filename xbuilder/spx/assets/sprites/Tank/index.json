@@ -1,7 +1,7 @@
 {
   "heading": 90,
-  "x": 0,
-  "y": 0,
+  "x": -204,
+  "y": -132,
   "size": 1,
   "rotationStyle": "normal",
   "physicsMode": "no",
@@ -16,18 +16,18 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "8y4ndlxrz8cs6qkpuieag",
+  "builder_id": "sili7oifupkzgi9dt7fec",
   "costumes": [
     {
-      "x": 4,
-      "y": 4,
+      "x": 14,
+      "y": 14,
       "faceRight": 0,
       "bitmapResolution": 1,
-      "name": "bullet",
-      "path": "bullet.svg",
-      "builder_id": "xmo1oa4lkx97b1xyvx4ri",
-      "imageWidth": 8,
-      "imageHeight": 8
+      "name": "tank",
+      "path": "tank.svg",
+      "builder_id": "o9ar3ar9kwt7w1myp3jrs",
+      "imageWidth": 28,
+      "imageHeight": 28
     }
   ]
 }

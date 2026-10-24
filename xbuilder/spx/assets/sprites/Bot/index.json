@@ -1,12 +1,12 @@
 {
-  "heading": 0,
-  "x": 186,
-  "y": -132,
+  "heading": 90,
+  "x": 0,
+  "y": 0,
   "size": 1,
   "rotationStyle": "normal",
   "physicsMode": "no",
   "costumeIndex": 0,
-  "visible": true,
+  "visible": false,
   "isDraggable": false,
   "collisionPivot": {
     "x": 0,
@@ -16,18 +16,18 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "r5vjx23bjqrgakaar8q4",
+  "builder_id": "ptjyqkbur9f0izylulhrs",
   "costumes": [
     {
-      "x": 52,
-      "y": 39,
+      "x": 14,
+      "y": 14,
       "faceRight": 0,
       "bitmapResolution": 1,
-      "name": "radar",
-      "path": "radar.svg",
-      "builder_id": "nu9i5kwh7sgugcsng2zcq",
-      "imageWidth": 104,
-      "imageHeight": 78
+      "name": "bot",
+      "path": "bot.svg",
+      "builder_id": "lhfbj8ue4kj7m8qcuzr4",
+      "imageWidth": 28,
+      "imageHeight": 28
     }
   ]
 }
