@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "qhkalqikkhn3xbesxt32",
+  "builder_id": "7s8mn7cqocfj107qlrn0e",
   "costumes": [
     {
       "x": 52,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "radar",
       "path": "radar.svg",
-      "builder_id": "0dhcsqu1pexs492t3w1k",
+      "builder_id": "qe8u7o575mzt06xncx2yn",
       "imageWidth": 104,
       "imageHeight": 78
     }

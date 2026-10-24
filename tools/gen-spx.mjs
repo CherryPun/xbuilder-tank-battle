@@ -51,6 +51,7 @@ const mainSpx = `var (
 	botsSpawned bool
 	blipsSpawned bool
 	itemsSpawned bool
+	bulletsSpawned bool
 	spawnID     int
 	botRefillAt int
 	itemAt      int
@@ -63,14 +64,15 @@ const mainSpx = `var (
 	botMoveTicks [8]int
 	botFireAt [8]int
 
-	shotX float64
-	shotY float64
-	shotVx float64
-	shotVy float64
-	shotBounces int
-	shotGhost bool
-	shotDamage float64
-	shotOwner int
+	bulletActive [16]bool
+	bulletX [16]float64
+	bulletY [16]float64
+	bulletVx [16]float64
+	bulletVy [16]float64
+	bulletBounce [16]int
+	bulletGhost [16]bool
+	bulletDmg [16]float64
+	bulletOwner [16]int
 
 	randX float64
 	randY float64
@@ -339,6 +341,9 @@ func StartGame() {
 	for i := 0; i < 4; i++ {
 		itemAlive[i] = false
 	}
+	for i := 0; i < 16; i++ {
+		bulletActive[i] = false
+	}
 	UpdateAmmo
 
 	for i := 0; i < 8; i++ {
@@ -417,10 +422,33 @@ func DamagePlayer(d float64) {
 	}
 }
 
+func SpawnBullet(owner int, x, y, vx, vy float64, bounces int, ghost bool, dmg float64) {
+	for i := 0; i < 16; i++ {
+		if !bulletActive[i] {
+			bulletActive[i] = true
+			bulletX[i] = x
+			bulletY[i] = y
+			bulletVx[i] = vx
+			bulletVy[i] = vy
+			bulletBounce[i] = bounces
+			bulletGhost[i] = ghost
+			bulletDmg[i] = dmg
+			bulletOwner[i] = owner
+			return
+		}
+	}
+}
+
 func FireShot(owner int) {
 	if gameState != 1 {
 		return
 	}
+	ox := 0.0
+	oy := 0.0
+	bounces := 0
+	ghost := false
+	dmg := 1.0
+	speed := tile * 0.36
 	if owner == 1 {
 		gap := 33
 		if ammoType == 3 {
@@ -430,88 +458,78 @@ func FireShot(owner int) {
 			return
 		}
 		lastShot = tick
-		shotX = playerX
-		shotY = playerY
-		shotDamage = damage
-		shotBounces = 4
-		shotGhost = false
+		ox = playerX
+		oy = playerY
+		bounces = 4
+		dmg = damage
 		if ammoType == 1 {
-			shotBounces = 4
-			shotDamage = damage * 2
+			dmg = damage * 2
 		}
 		if ammoType == 2 {
-			shotBounces = 6
+			bounces = 6
+			speed = tile * 0.32
 		}
 		if ammoType == 4 {
-			shotGhost = true
-			shotDamage = damage * 2
+			ghost = true
+			bounces = 0
+			dmg = damage * 2
 		}
 		if ammoLeft > 0 {
 			ammoLeft--
 			if ammoLeft <= 0 {
 				ammoType = 0
 			}
+			UpdateAmmo
 		}
 	} else {
-		shotX = botX[spawnID]
-		shotY = botY[spawnID]
-		shotDamage = 1
-		shotBounces = 0
-		shotGhost = false
+		ox = botX[spawnID]
+		oy = botY[spawnID]
+		speed = tile * 0.3
 	}
-	shotOwner = owner
-	shotVx = tile * 0.36
-	shotVy = 0
+	vx := 0.0
+	vy := 0.0
 	if owner == 1 {
 		if playerDir == 0 {
-			shotVx = 0
-			shotVy = tile * 0.36
+			vy = speed
 		}
 		if playerDir == 1 {
-			shotVx = tile * 0.36
-			shotVy = 0
+			vx = speed
 		}
 		if playerDir == 2 {
-			shotVx = 0
-			shotVy = -tile * 0.36
+			vy = -speed
 		}
 		if playerDir == 3 {
-			shotVx = -tile * 0.36
-			shotVy = 0
+			vx = -speed
 		}
 		if playerDir == 4 {
-			shotVx = tile * 0.25
-			shotVy = tile * 0.25
+			vx = speed * 0.7
+			vy = speed * 0.7
 		}
 		if playerDir == 5 {
-			shotVx = tile * 0.25
-			shotVy = -tile * 0.25
+			vx = speed * 0.7
+			vy = -speed * 0.7
 		}
 		if playerDir == 6 {
-			shotVx = -tile * 0.25
-			shotVy = -tile * 0.25
+			vx = -speed * 0.7
+			vy = -speed * 0.7
 		}
 		if playerDir == 7 {
-			shotVx = -tile * 0.25
-			shotVy = tile * 0.25
+			vx = -speed * 0.7
+			vy = speed * 0.7
 		}
 	} else {
 		d := botDir[spawnID]
 		if d == 0 {
-			shotVx = 0
-			shotVy = tile * 0.3
+			vy = speed
 		}
 		if d == 1 {
-			shotVx = tile * 0.3
-			shotVy = 0
+			vx = speed
 		}
 		if d == 2 {
-			shotVx = 0
-			shotVy = -tile * 0.3
+			vy = -speed
 		}
 		if d == 3 {
-			shotVx = -tile * 0.3
-			shotVy = 0
+			vx = -speed
 		}
 	}
 	if owner == 1 && ammoType == 2 {
@@ -530,13 +548,11 @@ func FireShot(owner int) {
 			py = -1
 		}
 		for k := -1; k <= 1; k++ {
-			shotX = playerX + px*float64(k)*tile*0.28
-			shotY = playerY + py*float64(k)*tile*0.28
-			Bullet.clone
+			SpawnBullet 1, ox+px*float64(k)*tile*0.28, oy+py*float64(k)*tile*0.28, vx, vy, bounces, ghost, dmg
 		}
 		return
 	}
-	Bullet.clone
+	SpawnBullet owner, ox, oy, vx, vy, bounces, ghost, dmg
 }
 
 func RefillBots() {
@@ -604,6 +620,13 @@ onStart => {
 			Item.clone
 		}
 		itemsSpawned = true
+	}
+	if !bulletsSpawned {
+		for i := 0; i < 16; i++ {
+			spawnID = i
+			Bullet.clone
+		}
+		bulletsSpawned = true
 	}
 	for {
 		wait 0.03
@@ -917,81 +940,70 @@ const botSpx = `onCloned => {
 `;
 
 const bulletSpx = `onCloned => {
-	vx := shotVx
-	vy := shotVy
-	left := shotBounces
-	ghost := shotGhost
-	dmg := shotDamage
-	owner := shotOwner
-	hitR := tile * 0.45
-	setXYpos shotX, shotY
-	setSize tile * 0.24 / 8
-	show
-	for i := 0; i < 400; i++ {
-		if gameState != 1 {
-			destroy
-			return
+	id := spawnID
+	hide
+	for {
+		wait 0.02
+		if gameState != 1 || !bulletActive[id] {
+			hide
+			continue
 		}
-		nx := xpos + vx
-		if ghost {
-			setXpos nx
-		} else if IsWallCell(CellCol(nx), CellRow(ypos)) {
-			if left > 0 {
-				left--
-				vx = -vx
+		show
+		setSize tile * 0.26 / 8
+		vx := bulletVx[id]
+		vy := bulletVy[id]
+		nx := bulletX[id] + vx
+		if bulletGhost[id] {
+			bulletX[id] = nx
+		} else if IsWallCell(CellCol(nx), CellRow(bulletY[id])) {
+			if bulletBounce[id] > 0 {
+				bulletBounce[id]--
+				bulletVx[id] = -vx
 			} else {
-				destroy
-				return
+				bulletActive[id] = false
+				continue
 			}
 		} else {
-			setXpos nx
+			bulletX[id] = nx
 		}
-		ny := ypos + vy
-		if ghost {
-			setYpos ny
-		} else if IsWallCell(CellCol(xpos), CellRow(ny)) {
-			if left > 0 {
-				left--
-				vy = -vy
+		ny := bulletY[id] + bulletVy[id]
+		if bulletGhost[id] {
+			bulletY[id] = ny
+		} else if IsWallCell(CellCol(bulletX[id]), CellRow(ny)) {
+			if bulletBounce[id] > 0 {
+				bulletBounce[id]--
+				bulletVy[id] = -vy
 			} else {
-				destroy
-				return
+				bulletActive[id] = false
+				continue
 			}
 		} else {
-			setYpos ny
+			bulletY[id] = ny
 		}
-		if ghost {
-			if xpos < -260 || xpos > 260 || ypos < -200 || ypos > 200 {
-				destroy
-				return
-			}
-		} else if IsWallCell(CellCol(xpos), CellRow(ypos)) {
-			destroy
-			return
+		setXYpos bulletX[id], bulletY[id]
+		if bulletX[id] < -250 || bulletX[id] > 250 || bulletY[id] < -190 || bulletY[id] > 190 {
+			bulletActive[id] = false
+			continue
 		}
-		if owner == 1 {
-			for id := 0; id < 8; id++ {
-				if botAlive[id] {
-					if Absf(xpos-botX[id]) < hitR && Absf(ypos-botY[id]) < hitR {
-						botHP[id] = botHP[id] - dmg
-						if botHP[id] <= 0 {
-							KillBot(id)
+		if bulletOwner[id] == 1 {
+			for b := 0; b < 8; b++ {
+				if botAlive[b] {
+					if Absf(bulletX[id]-botX[b]) < tile*0.5 && Absf(bulletY[id]-botY[b]) < tile*0.5 {
+						botHP[b] = botHP[b] - bulletDmg[id]
+						if botHP[b] <= 0 {
+							KillBot(b)
 						}
-						destroy
-						return
+						bulletActive[id] = false
 					}
 				}
 			}
 		} else {
-			if Absf(xpos-playerX) < hitR && Absf(ypos-playerY) < hitR {
-				DamagePlayer(dmg)
-				destroy
-				return
+			if Absf(bulletX[id]-playerX) < tile*0.5 && Absf(bulletY[id]-playerY) < tile*0.5 {
+				DamagePlayer(bulletDmg[id])
+				bulletActive[id] = false
 			}
 		}
-		wait 0.02
 	}
-	destroy
 }
 `;
 
