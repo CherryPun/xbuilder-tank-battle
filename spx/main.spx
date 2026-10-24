@@ -15,11 +15,6 @@ var (
 
 	tick       int
 	lastShot   int
-	rapidUntil int
-	shieldUntil int
-	thornsUntil int
-	ammoType   int
-	ammoLeft   int
 
 	playerX   float64
 	playerY   float64
@@ -31,11 +26,9 @@ var (
 	botCap    int
 	botsSpawned bool
 	blipsSpawned bool
-	itemsSpawned bool
 	bulletsSpawned bool
 	spawnID     int
 	botRefillAt int
-	itemAt      int
 
 	botX [8]float64
 	botY [8]float64
@@ -58,11 +51,6 @@ var (
 	randX float64
 	randY float64
 
-	itemX [4]float64
-	itemY [4]float64
-	itemType [4]int
-	itemAlive [4]bool
-	itemTime [4]int
 
 	godMode bool
 	konamiIdx int
@@ -71,7 +59,6 @@ var (
 	modeText    string
 	playersText string
 	typeText    string
-	ammoText    string
 )
 
 func Absf(v float64) float64 {
@@ -173,72 +160,6 @@ func MenuText() {
 	statusText = "空格开始 | 1/2/3 选坦克 | C 切模式 | X 切人数"
 }
 
-func UpdateAmmo() {
-	ammoText = "默认弹"
-	if ammoType == 1 {
-		ammoText = "激光"
-	}
-	if ammoType == 2 {
-		ammoText = "霰弹"
-	}
-	if ammoType == 3 {
-		ammoText = "快速射击"
-	}
-	if ammoType == 4 {
-		ammoText = "穿透激光"
-	}
-	if shieldUntil > tick {
-		ammoText = ammoText + " +无敌"
-	}
-	if thornsUntil > tick {
-		ammoText = ammoText + " +反甲"
-	}
-}
-
-func ApplyItem(t int) {
-	ammoType = 0
-	ammoLeft = 0
-	if t == 0 {
-		ammoType = 1
-		ammoLeft = 3
-	}
-	if t == 1 {
-		ammoType = 4
-		ammoLeft = 1
-	}
-	if t == 2 {
-		ammoType = 2
-		ammoLeft = 5
-	}
-	if t == 3 {
-		ammoType = 3
-		ammoLeft = 999
-		rapidUntil = tick + 333
-	}
-	if t == 4 {
-		shieldUntil = tick + 333
-	}
-	if t == 5 {
-		thornsUntil = tick + 333
-	}
-	UpdateAmmo
-}
-
-func SpawnItem() {
-	for i := 0; i < 4; i++ {
-		if !itemAlive[i] {
-			if PickSpot(tile * 2) {
-				itemX[i] = randX
-				itemY[i] = randY
-				itemType[i] = int(rand(0, 5))
-				itemAlive[i] = true
-				itemTime[i] = tick
-			}
-			return
-		}
-	}
-}
-
 func KonamiStep(k int) {
 	seq := [12]int{0, 0, 2, 2, 3, 1, 3, 1, 4, 5, 4, 5}
 	if konamiIdx >= 12 {
@@ -309,23 +230,13 @@ func StartGame() {
 	kills = 0
 	tick = 0
 	lastShot = -300
-	rapidUntil = 0
-	shieldUntil = 0
-	thornsUntil = 0
-	ammoType = 0
-	ammoLeft = 0
 	botCap = players - 1
 	botsAlive = 0
 	botRefillAt = 500
-	itemAt = 500
 
-	for i := 0; i < 4; i++ {
-		itemAlive[i] = false
-	}
 	for i := 0; i < 16; i++ {
 		bulletActive[i] = false
 	}
-	UpdateAmmo
 
 	for i := 0; i < 8; i++ {
 		botAlive[i] = false
@@ -381,21 +292,6 @@ func DamagePlayer(d float64) {
 	if godMode {
 		return
 	}
-	if shieldUntil > tick {
-		return
-	}
-	if thornsUntil > tick {
-		for i := 0; i < 8; i++ {
-			if botAlive[i] {
-				botHP[i] = botHP[i] - d
-				if botHP[i] <= 0 {
-					KillBot(i)
-				}
-				break
-			}
-		}
-		return
-	}
 	hp = hp - d
 	if hp <= 0 {
 		gameState = 2
@@ -431,11 +327,7 @@ func FireShot(owner int) {
 	dmg := 1.0
 	speed := tile * 0.36
 	if owner == 1 {
-		gap := 33
-		if ammoType == 3 {
-			gap = 10
-		}
-		if tick-lastShot < gap {
+		if tick-lastShot < 33 {
 			return
 		}
 		lastShot = tick
@@ -443,25 +335,6 @@ func FireShot(owner int) {
 		oy = playerY
 		bounces = 4
 		dmg = damage
-		if ammoType == 1 {
-			dmg = damage * 2
-		}
-		if ammoType == 2 {
-			bounces = 6
-			speed = tile * 0.32
-		}
-		if ammoType == 4 {
-			ghost = true
-			bounces = 0
-			dmg = damage * 2
-		}
-		if ammoLeft > 0 {
-			ammoLeft--
-			if ammoLeft <= 0 {
-				ammoType = 0
-			}
-			UpdateAmmo
-		}
 	} else {
 		ox = botX[spawnID]
 		oy = botY[spawnID]
@@ -513,26 +386,6 @@ func FireShot(owner int) {
 			vx = -speed
 		}
 	}
-	if owner == 1 && ammoType == 2 {
-		px := 0.0
-		py := 0.0
-		if playerDir == 0 {
-			px = 1
-		}
-		if playerDir == 2 {
-			px = -1
-		}
-		if playerDir == 1 {
-			py = 1
-		}
-		if playerDir == 3 {
-			py = -1
-		}
-		for k := -1; k <= 1; k++ {
-			SpawnBullet 1, ox+px*float64(k)*tile*0.28, oy+py*float64(k)*tile*0.28, vx, vy, bounces, ghost, dmg
-		}
-		return
-	}
 	SpawnBullet owner, ox, oy, vx, vy, bounces, ghost, dmg
 }
 
@@ -561,27 +414,9 @@ func GameTick() {
 		return
 	}
 	tick++
-	if rapidUntil > 0 && tick > rapidUntil {
-		rapidUntil = 0
-		if ammoType == 3 {
-			ammoType = 0
-		}
-	}
 	if mode == 1 && tick >= botRefillAt {
 		botRefillAt = tick + 500
 		RefillBots
-	}
-	if tick >= itemAt {
-		itemAt = tick + 500
-		SpawnItem
-	}
-	for i := 0; i < 4; i++ {
-		if itemAlive[i] && tick-itemTime[i] > 1000 {
-			itemAlive[i] = false
-		}
-	}
-	if tick%10 == 0 {
-		UpdateAmmo
 	}
 }
 
@@ -589,18 +424,11 @@ onStart => {
 	MenuText
 	UpdateTexts
 	if !blipsSpawned {
-		for i := 0; i < 12; i++ {
+		for i := 0; i < 8; i++ {
 			spawnID = i
 			Blip.clone
 		}
 		blipsSpawned = true
-	}
-	if !itemsSpawned {
-		for i := 0; i < 4; i++ {
-			spawnID = i
-			Item.clone
-		}
-		itemsSpawned = true
 	}
 	if !bulletsSpawned {
 		for i := 0; i < 16; i++ {

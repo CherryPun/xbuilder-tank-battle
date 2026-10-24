@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "jh8g6hdmromev0ibj5o6",
+  "builder_id": "0j3cid8g8br9bsmvgml7k",
   "costumes": [
     {
       "x": 3,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "player",
       "path": "green.svg",
-      "builder_id": "6cfbdl2fkwbixftcjn9d7",
+      "builder_id": "oztikve7p6tptdlhqj2rk",
       "imageWidth": 6,
       "imageHeight": 6
     },
@@ -36,18 +36,7 @@
       "bitmapResolution": 1,
       "name": "bot",
       "path": "red.svg",
-      "builder_id": "clt7dlslo35w7300hc2kj",
-      "imageWidth": 6,
-      "imageHeight": 6
-    },
-    {
-      "x": 3,
-      "y": 3,
-      "faceRight": 0,
-      "bitmapResolution": 1,
-      "name": "item",
-      "path": "gold.svg",
-      "builder_id": "2dqh73ychh6jv06ltmczd",
+      "builder_id": "ypzxh1dna1r0ipc752lpn",
       "imageWidth": 6,
       "imageHeight": 6
     }

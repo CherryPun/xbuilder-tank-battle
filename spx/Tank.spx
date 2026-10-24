@@ -85,14 +85,6 @@ onStart => {
 			}
 		}
 		setXYpos playerX, playerY
-		for i := 0; i < 4; i++ {
-			if itemAlive[i] {
-				if Absf(playerX-itemX[i]) < tile*0.7 && Absf(playerY-itemY[i]) < tile*0.7 {
-					ApplyItem(itemType[i])
-					itemAlive[i] = false
-				}
-			}
-		}
 	}
 }
 
