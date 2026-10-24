@@ -1,0 +1,77 @@
+onCloned => {
+	vx := shotVx
+	vy := shotVy
+	left := shotBounces
+	ghost := shotGhost
+	dmg := shotDamage
+	owner := shotOwner
+	hitR := tile * 0.45
+	setXYpos shotX, shotY
+	setSize tile * 0.24 / 8
+	show
+	for i := 0; i < 400; i++ {
+		if gameState != 1 {
+			destroy
+			return
+		}
+		nx := xpos + vx
+		if ghost {
+			setXpos nx
+		} else if IsWallCell(CellCol(nx), CellRow(ypos)) {
+			if left > 0 {
+				left--
+				vx = -vx
+			} else {
+				destroy
+				return
+			}
+		} else {
+			setXpos nx
+		}
+		ny := ypos + vy
+		if ghost {
+			setYpos ny
+		} else if IsWallCell(CellCol(xpos), CellRow(ny)) {
+			if left > 0 {
+				left--
+				vy = -vy
+			} else {
+				destroy
+				return
+			}
+		} else {
+			setYpos ny
+		}
+		if ghost {
+			if xpos < -260 || xpos > 260 || ypos < -200 || ypos > 200 {
+				destroy
+				return
+			}
+		} else if IsWallCell(CellCol(xpos), CellRow(ypos)) {
+			destroy
+			return
+		}
+		if owner == 1 {
+			for id := 0; id < 8; id++ {
+				if botAlive[id] {
+					if Absf(xpos-botX[id]) < hitR && Absf(ypos-botY[id]) < hitR {
+						botHP[id] = botHP[id] - dmg
+						if botHP[id] <= 0 {
+							KillBot(id)
+						}
+						destroy
+						return
+					}
+				}
+			}
+		} else {
+			if Absf(xpos-playerX) < hitR && Absf(ypos-playerY) < hitR {
+				DamagePlayer(dmg)
+				destroy
+				return
+			}
+		}
+		wait 0.02
+	}
+	destroy
+}

@@ -1,0 +1,88 @@
+{
+  "heading": 0,
+  "x": 0,
+  "y": 0,
+  "size": 1,
+  "rotationStyle": "normal",
+  "physicsMode": "no",
+  "costumeIndex": 0,
+  "visible": false,
+  "isDraggable": false,
+  "collisionPivot": {
+    "x": 0,
+    "y": 0
+  },
+  "collisionShapeType": "none",
+  "collisionShapeParams": [],
+  "fAnimations": {},
+  "animBindings": {},
+  "builder_id": "3h8i9qvmlqe5h38bb66c",
+  "costumes": [
+    {
+      "x": 11,
+      "y": 11,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "laser",
+      "path": "laser.svg",
+      "builder_id": "uunpgpz9x2seju50x07x",
+      "imageWidth": 22,
+      "imageHeight": 22
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "pierce",
+      "path": "pierce.svg",
+      "builder_id": "7ylcr5g5pr7gaoxjk3zi2",
+      "imageWidth": 22,
+      "imageHeight": 22
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "shotgun",
+      "path": "shotgun.svg",
+      "builder_id": "8sqhf616lbhyy7yhi682e",
+      "imageWidth": 22,
+      "imageHeight": 22
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "rapid",
+      "path": "rapid.svg",
+      "builder_id": "vq1ja57tdrrjufojoek4",
+      "imageWidth": 22,
+      "imageHeight": 22
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "shield",
+      "path": "shield.svg",
+      "builder_id": "v5rmbhbw25pb97ji1slm",
+      "imageWidth": 22,
+      "imageHeight": 22
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "thorns",
+      "path": "thorns.svg",
+      "builder_id": "elr2bfh4t63paa6nkfudr",
+      "imageWidth": 22,
+      "imageHeight": 22
+    }
+  ]
+}

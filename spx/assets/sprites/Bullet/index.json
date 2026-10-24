@@ -1,0 +1,33 @@
+{
+  "heading": 90,
+  "x": 0,
+  "y": 0,
+  "size": 1,
+  "rotationStyle": "normal",
+  "physicsMode": "no",
+  "costumeIndex": 0,
+  "visible": false,
+  "isDraggable": false,
+  "collisionPivot": {
+    "x": 0,
+    "y": 0
+  },
+  "collisionShapeType": "none",
+  "collisionShapeParams": [],
+  "fAnimations": {},
+  "animBindings": {},
+  "builder_id": "8al0ugwwn6w30y2eabts",
+  "costumes": [
+    {
+      "x": 4,
+      "y": 4,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "bullet",
+      "path": "bullet.svg",
+      "builder_id": "wkb7fcdb7pvudkuzbqnu",
+      "imageWidth": 8,
+      "imageHeight": 8
+    }
+  ]
+}

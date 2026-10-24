@@ -1,0 +1,33 @@
+{
+  "heading": 90,
+  "x": 0,
+  "y": 0,
+  "size": 1,
+  "rotationStyle": "normal",
+  "physicsMode": "no",
+  "costumeIndex": 0,
+  "visible": false,
+  "isDraggable": false,
+  "collisionPivot": {
+    "x": 0,
+    "y": 0
+  },
+  "collisionShapeType": "none",
+  "collisionShapeParams": [],
+  "fAnimations": {},
+  "animBindings": {},
+  "builder_id": "p0qwj2epwfglw95ptc6b8",
+  "costumes": [
+    {
+      "x": 14,
+      "y": 14,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "bot",
+      "path": "bot.svg",
+      "builder_id": "30ti1jfxvttkioxax4ici",
+      "imageWidth": 28,
+      "imageHeight": 28
+    }
+  ]
+}

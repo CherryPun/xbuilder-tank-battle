@@ -1,0 +1,33 @@
+{
+  "heading": 90,
+  "x": -204,
+  "y": -132,
+  "size": 1,
+  "rotationStyle": "normal",
+  "physicsMode": "no",
+  "costumeIndex": 0,
+  "visible": false,
+  "isDraggable": false,
+  "collisionPivot": {
+    "x": 0,
+    "y": 0
+  },
+  "collisionShapeType": "none",
+  "collisionShapeParams": [],
+  "fAnimations": {},
+  "animBindings": {},
+  "builder_id": "vs90exl51c8d3h1wsibdm",
+  "costumes": [
+    {
+      "x": 14,
+      "y": 14,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "tank",
+      "path": "tank.svg",
+      "builder_id": "ciyyypa5sjnnw076xgkj9",
+      "imageWidth": 28,
+      "imageHeight": 28
+    }
+  ]
+}

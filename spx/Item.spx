@@ -1,0 +1,15 @@
+onCloned => {
+	id := spawnID
+	hide
+	for {
+		wait 0.05
+		if gameState != 1 || !itemAlive[id] {
+			hide
+			continue
+		}
+		show
+		setCostume itemType[id]
+		setSize tile * 0.55 / 22
+		setXYpos itemX[id], itemY[id]
+	}
+}

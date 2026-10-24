@@ -1,0 +1,55 @@
+{
+  "heading": 0,
+  "x": 186,
+  "y": -132,
+  "size": 1,
+  "rotationStyle": "normal",
+  "physicsMode": "no",
+  "costumeIndex": 0,
+  "visible": false,
+  "isDraggable": false,
+  "collisionPivot": {
+    "x": 0,
+    "y": 0
+  },
+  "collisionShapeType": "none",
+  "collisionShapeParams": [],
+  "fAnimations": {},
+  "animBindings": {},
+  "builder_id": "z2cb63uycewxubaay9hia",
+  "costumes": [
+    {
+      "x": 3,
+      "y": 3,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "player",
+      "path": "green.svg",
+      "builder_id": "hof2v4234vdi2dzfd5x9",
+      "imageWidth": 6,
+      "imageHeight": 6
+    },
+    {
+      "x": 3,
+      "y": 3,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "bot",
+      "path": "red.svg",
+      "builder_id": "wkugs0f0arnpxtv4l2wdl",
+      "imageWidth": 6,
+      "imageHeight": 6
+    },
+    {
+      "x": 3,
+      "y": 3,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "item",
+      "path": "gold.svg",
+      "builder_id": "49mx8lfrk46oq0la13k3s",
+      "imageWidth": 6,
+      "imageHeight": 6
+    }
+  ]
+}
