@@ -1,0 +1,7 @@
+onStart => {
+	show
+	for {
+		setCostume level
+		wait 0.1
+	}
+}

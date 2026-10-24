@@ -1,0 +1,33 @@
+{
+  "heading": 0,
+  "x": 186,
+  "y": -132,
+  "size": 1,
+  "rotationStyle": "normal",
+  "physicsMode": "no",
+  "costumeIndex": 0,
+  "visible": true,
+  "isDraggable": false,
+  "collisionPivot": {
+    "x": 0,
+    "y": 0
+  },
+  "collisionShapeType": "none",
+  "collisionShapeParams": [],
+  "fAnimations": {},
+  "animBindings": {},
+  "builder_id": "pezfxwsfxfloal4ws30e7",
+  "costumes": [
+    {
+      "x": 52,
+      "y": 39,
+      "faceRight": 0,
+      "bitmapResolution": 1,
+      "name": "radar",
+      "path": "radar.svg",
+      "builder_id": "z4u3fz2oo1g540wrb9i18",
+      "imageWidth": 104,
+      "imageHeight": 78
+    }
+  ]
+}

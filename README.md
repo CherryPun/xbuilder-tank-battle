@@ -2,6 +2,15 @@
 
 经典坦克大战的现代重制：一发致命、子弹反弹、每 15 秒刷新随机装备，支持 1v1 / 4 人混战 / 8 人混战，以及经典与人机无限刷新的肉鸽模式。纯前端 Canvas 实现，零依赖。
 
+仓库同时包含 XBuilder（SPX）版本，源码在 `spx/`，由 `tools/gen-spx.mjs` 生成并打包为 `.xbp` 导入 XBuilder。架构与模块规格见 [docs/architecture.md](docs/architecture.md)。
+
+## XBuilder 版
+
+1. 运行 `node tools/gen-spx.mjs` 生成 `spx/`，再用仓库脚本打 zip 包得到 `.xbp`（或直接使用已打好的 `.xbp`）。
+2. 在 XBuilder 中选择导入 `.xbp`，项目名与仓库同名。
+3. 菜单按键：`1/2/3` 选坦克类型，`C` 切经典/肉鸽，`X` 切 1v1/4人/8人，`空格` 开始；对局中 `WASD`/方向键移动，`J`/`空格` 开火。
+4. 彩蛋：在菜单输入 `↑↑↓↓←→←→ B A B A` 切换无敌模式。
+
 ## 运行
 
 环境：Node 18+（推荐）或 Python 3。必须用本地 HTTP 服务打开——直接双击 `index.html` 会因 ES module 的 CORS 限制停在空白页。

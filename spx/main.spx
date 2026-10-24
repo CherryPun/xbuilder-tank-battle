@@ -1,0 +1,615 @@
+var (
+	gameState int
+	mode      int
+	players   int
+	playerType int
+
+	hp     float64
+	maxHP  float64
+	damage float64
+
+	level int
+	tile  float64
+	cols  int
+	rows  int
+
+	tick       int
+	lastShot   int
+	rapidUntil int
+	shieldUntil int
+	thornsUntil int
+	ammoType   int
+	ammoLeft   int
+
+	playerX   float64
+	playerY   float64
+	playerDir int
+
+	score     int
+	kills     int
+	botsAlive int
+	botCap    int
+	botsSpawned bool
+	blipsSpawned bool
+	itemsSpawned bool
+	spawnID     int
+	botRefillAt int
+	itemAt      int
+
+	botX [8]float64
+	botY [8]float64
+	botHP [8]float64
+	botAlive [8]bool
+	botDir [8]int
+	botMoveTicks [8]int
+	botFireAt [8]int
+
+	shotX float64
+	shotY float64
+	shotVx float64
+	shotVy float64
+	shotBounces int
+	shotGhost bool
+	shotDamage float64
+	shotOwner int
+
+	randX float64
+	randY float64
+
+	itemX [4]float64
+	itemY [4]float64
+	itemType [4]int
+	itemAlive [4]bool
+	itemTime [4]int
+
+	godMode bool
+	konamiIdx int
+
+	statusText  string
+	modeText    string
+	playersText string
+	typeText    string
+	ammoText    string
+)
+
+func Absf(v float64) float64 {
+	if v < 0 {
+		return -v
+	}
+	return v
+}
+
+func CellCol(x float64) int {
+	return int((x + 240) / tile)
+}
+
+func CellRow(y float64) int {
+	return int((180 - y) / tile)
+}
+
+func WallNoise(c, r int) int {
+	n := ((c*7+r*13)*31 + c*3 + r*5) % 100
+	if n < 0 {
+		n = -n
+	}
+	return n
+}
+
+func IsWallCell(c, r int) bool {
+	if c <= 0 || r <= 0 || c >= cols-1 || r >= rows-1 {
+		return true
+	}
+	if c%4 == 1 || c%4 == 2 {
+		if r%4 == 1 || r%4 == 2 {
+			if WallNoise(c, r) < 62 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func BlockedAt(x, y float64) bool {
+	h := tile * 0.32
+	if IsWallCell(CellCol(x-h), CellRow(y-h)) {
+		return true
+	}
+	if IsWallCell(CellCol(x+h), CellRow(y-h)) {
+		return true
+	}
+	if IsWallCell(CellCol(x-h), CellRow(y+h)) {
+		return true
+	}
+	if IsWallCell(CellCol(x+h), CellRow(y+h)) {
+		return true
+	}
+	return false
+}
+
+func LineClear(x1, y1, x2, y2 float64) bool {
+	n := int((Absf(x2-x1) + Absf(y2-y1)) / (tile * 0.4))
+	if n < 2 {
+		return true
+	}
+	for i := 1; i < n; i++ {
+		px := x1 + (x2-x1)*float64(i)/float64(n)
+		py := y1 + (y2-y1)*float64(i)/float64(n)
+		if IsWallCell(CellCol(px), CellRow(py)) {
+			return false
+		}
+	}
+	return true
+}
+
+func UpdateTexts() {
+	if mode == 0 {
+		modeText = "经典"
+	} else {
+		modeText = "肉鸽"
+	}
+	if players == 2 {
+		playersText = "1v1"
+	}
+	if players == 4 {
+		playersText = "4人"
+	}
+	if players == 8 {
+		playersText = "8人"
+	}
+	if playerType == 0 {
+		typeText = "平衡型"
+	}
+	if playerType == 1 {
+		typeText = "速度型"
+	}
+	if playerType == 2 {
+		typeText = "防御型"
+	}
+}
+
+func MenuText() {
+	statusText = "空格开始 | 1/2/3 选坦克 | C 切模式 | X 切人数"
+}
+
+func UpdateAmmo() {
+	ammoText = "默认弹"
+	if ammoType == 1 {
+		ammoText = "激光"
+	}
+	if ammoType == 2 {
+		ammoText = "霰弹"
+	}
+	if ammoType == 3 {
+		ammoText = "快速射击"
+	}
+	if ammoType == 4 {
+		ammoText = "穿透激光"
+	}
+	if shieldUntil > tick {
+		ammoText = ammoText + " +无敌"
+	}
+	if thornsUntil > tick {
+		ammoText = ammoText + " +反甲"
+	}
+}
+
+func ApplyItem(t int) {
+	ammoType = 0
+	ammoLeft = 0
+	if t == 0 {
+		ammoType = 1
+		ammoLeft = 3
+	}
+	if t == 1 {
+		ammoType = 4
+		ammoLeft = 1
+	}
+	if t == 2 {
+		ammoType = 2
+		ammoLeft = 5
+	}
+	if t == 3 {
+		ammoType = 3
+		ammoLeft = 999
+		rapidUntil = tick + 333
+	}
+	if t == 4 {
+		shieldUntil = tick + 333
+	}
+	if t == 5 {
+		thornsUntil = tick + 333
+	}
+	UpdateAmmo
+}
+
+func SpawnItem() {
+	for i := 0; i < 4; i++ {
+		if !itemAlive[i] {
+			if PickSpot(tile * 2) {
+				itemX[i] = randX
+				itemY[i] = randY
+				itemType[i] = int(rand(0, 5))
+				itemAlive[i] = true
+				itemTime[i] = tick
+			}
+			return
+		}
+	}
+}
+
+func KonamiStep(k int) {
+	seq := [12]int{0, 0, 2, 2, 3, 1, 3, 1, 4, 5, 4, 5}
+	if konamiIdx >= 12 {
+		konamiIdx = 0
+	}
+	if seq[konamiIdx] == k {
+		konamiIdx++
+		if konamiIdx == 12 {
+			konamiIdx = 0
+			if godMode {
+				godMode = false
+				statusText = "彩蛋：无敌模式关闭"
+			} else {
+				godMode = true
+				statusText = "彩蛋：无敌模式开启"
+			}
+		}
+	} else {
+		if k == 0 {
+			konamiIdx = 1
+		} else {
+			konamiIdx = 0
+		}
+	}
+}
+
+func PickSpot(minDist float64) bool {
+	for i := 0; i < 300; i++ {
+		c := int(rand(1, cols-2))
+		r := int(rand(1, rows-2))
+		if !IsWallCell(c, r) {
+			x := -240 + (float64(c)+0.5)*tile
+			y := 180 - (float64(r)+0.5)*tile
+			if Absf(x-playerX)+Absf(y-playerY) > minDist {
+				randX = x
+				randY = y
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func StartGame() {
+	if players == 2 {
+		level = 0
+	}
+	if players == 4 {
+		level = 1
+	}
+	if players == 8 {
+		level = 2
+	}
+	tile = 24
+	if level == 1 {
+		tile = 16
+	}
+	if level == 2 {
+		tile = 12
+	}
+	cols = 20
+	rows = 15
+	if level == 1 {
+		cols = 30
+		rows = 22
+	}
+	if level == 2 {
+		cols = 40
+		rows = 30
+	}
+
+	if playerType == 0 {
+		maxHP = 1
+		damage = 1
+	}
+	if playerType == 1 {
+		maxHP = 2
+		damage = 0.5
+	}
+	if playerType == 2 {
+		maxHP = 2
+		damage = 1
+	}
+	hp = maxHP
+	playerX = -240 + 3.5*tile
+	playerY = 180 - 3.5*tile
+	playerDir = 1
+
+	score = 0
+	kills = 0
+	tick = 0
+	lastShot = -300
+	rapidUntil = 0
+	shieldUntil = 0
+	thornsUntil = 0
+	ammoType = 0
+	ammoLeft = 0
+	botCap = players - 1
+	botsAlive = 0
+	botRefillAt = 500
+	itemAt = 500
+
+	for i := 0; i < 4; i++ {
+		itemAlive[i] = false
+	}
+	UpdateAmmo
+
+	for i := 0; i < 8; i++ {
+		botAlive[i] = false
+		botHP[i] = 1
+	}
+	for i := 0; i < botCap; i++ {
+		if PickSpot(tile * 6) {
+			botX[i] = randX
+			botY[i] = randY
+		} else {
+			botX[i] = 240 - 3.5*tile
+			botY[i] = -180 + 3.5*tile
+		}
+		botHP[i] = 1
+		botAlive[i] = true
+		botDir[i] = 2
+		botMoveTicks[i] = 10
+		botFireAt[i] = 30
+		botsAlive++
+	}
+
+	if !botsSpawned {
+		for i := 0; i < 8; i++ {
+			spawnID = i
+			Bot.clone
+		}
+		botsSpawned = true
+	}
+
+	statusText = ""
+	UpdateTexts
+	gameState = 1
+}
+
+func KillBot(id int) {
+	if !botAlive[id] {
+		return
+	}
+	botAlive[id] = false
+	botsAlive--
+	score += 10
+	kills++
+	if mode == 0 && botsAlive <= 0 {
+		gameState = 2
+		statusText = "全歼人机！按空格返回菜单"
+	}
+}
+
+func DamagePlayer(d float64) {
+	if gameState != 1 {
+		return
+	}
+	if godMode {
+		return
+	}
+	if shieldUntil > tick {
+		return
+	}
+	if thornsUntil > tick {
+		for i := 0; i < 8; i++ {
+			if botAlive[i] {
+				botHP[i] = botHP[i] - d
+				if botHP[i] <= 0 {
+					KillBot(i)
+				}
+				break
+			}
+		}
+		return
+	}
+	hp = hp - d
+	if hp <= 0 {
+		gameState = 2
+		statusText = "坦克阵亡！按空格返回菜单"
+	}
+}
+
+func FireShot(owner int) {
+	if gameState != 1 {
+		return
+	}
+	if owner == 1 {
+		gap := 33
+		if ammoType == 3 {
+			gap = 10
+		}
+		if tick-lastShot < gap {
+			return
+		}
+		lastShot = tick
+		shotX = playerX
+		shotY = playerY
+		shotDamage = damage
+		shotBounces = 4
+		shotGhost = false
+		if ammoType == 1 {
+			shotBounces = 4
+			shotDamage = damage * 2
+		}
+		if ammoType == 2 {
+			shotBounces = 6
+		}
+		if ammoType == 4 {
+			shotGhost = true
+			shotDamage = damage * 2
+		}
+		if ammoLeft > 0 {
+			ammoLeft--
+			if ammoLeft <= 0 {
+				ammoType = 0
+			}
+		}
+	} else {
+		shotX = botX[spawnID]
+		shotY = botY[spawnID]
+		shotDamage = 1
+		shotBounces = 0
+		shotGhost = false
+	}
+	shotOwner = owner
+	shotVx = tile * 0.36
+	shotVy = 0
+	if owner == 1 {
+		if playerDir == 0 {
+			shotVx = 0
+			shotVy = tile * 0.36
+		}
+		if playerDir == 1 {
+			shotVx = tile * 0.36
+			shotVy = 0
+		}
+		if playerDir == 2 {
+			shotVx = 0
+			shotVy = -tile * 0.36
+		}
+		if playerDir == 3 {
+			shotVx = -tile * 0.36
+			shotVy = 0
+		}
+		if playerDir == 4 {
+			shotVx = tile * 0.25
+			shotVy = tile * 0.25
+		}
+		if playerDir == 5 {
+			shotVx = tile * 0.25
+			shotVy = -tile * 0.25
+		}
+		if playerDir == 6 {
+			shotVx = -tile * 0.25
+			shotVy = -tile * 0.25
+		}
+		if playerDir == 7 {
+			shotVx = -tile * 0.25
+			shotVy = tile * 0.25
+		}
+	} else {
+		d := botDir[spawnID]
+		if d == 0 {
+			shotVx = 0
+			shotVy = tile * 0.3
+		}
+		if d == 1 {
+			shotVx = tile * 0.3
+			shotVy = 0
+		}
+		if d == 2 {
+			shotVx = 0
+			shotVy = -tile * 0.3
+		}
+		if d == 3 {
+			shotVx = -tile * 0.3
+			shotVy = 0
+		}
+	}
+	if owner == 1 && ammoType == 2 {
+		px := 0.0
+		py := 0.0
+		if playerDir == 0 {
+			px = 1
+		}
+		if playerDir == 2 {
+			px = -1
+		}
+		if playerDir == 1 {
+			py = 1
+		}
+		if playerDir == 3 {
+			py = -1
+		}
+		for k := -1; k <= 1; k++ {
+			shotX = playerX + px*float64(k)*tile*0.28
+			shotY = playerY + py*float64(k)*tile*0.28
+			Bullet.clone
+		}
+		return
+	}
+	Bullet.clone
+}
+
+func RefillBots() {
+	for i := 0; i < botCap; i++ {
+		if !botAlive[i] {
+			if PickSpot(tile * 6) {
+				botX[i] = randX
+				botY[i] = randY
+			} else {
+				botX[i] = 240 - 3.5*tile
+				botY[i] = -180 + 3.5*tile
+			}
+			botHP[i] = 1
+			botAlive[i] = true
+			botDir[i] = 2
+			botMoveTicks[i] = 10
+			botFireAt[i] = tick + 60
+			botsAlive++
+		}
+	}
+}
+
+func GameTick() {
+	if gameState != 1 {
+		return
+	}
+	tick++
+	if rapidUntil > 0 && tick > rapidUntil {
+		rapidUntil = 0
+		if ammoType == 3 {
+			ammoType = 0
+		}
+	}
+	if mode == 1 && tick >= botRefillAt {
+		botRefillAt = tick + 500
+		RefillBots
+	}
+	if tick >= itemAt {
+		itemAt = tick + 500
+		SpawnItem
+	}
+	for i := 0; i < 4; i++ {
+		if itemAlive[i] && tick-itemTime[i] > 1000 {
+			itemAlive[i] = false
+		}
+	}
+	if tick%10 == 0 {
+		UpdateAmmo
+	}
+}
+
+onStart => {
+	MenuText
+	UpdateTexts
+	if !blipsSpawned {
+		for i := 0; i < 12; i++ {
+			spawnID = i
+			Blip.clone
+		}
+		blipsSpawned = true
+	}
+	if !itemsSpawned {
+		for i := 0; i < 4; i++ {
+			spawnID = i
+			Item.clone
+		}
+		itemsSpawned = true
+	}
+	for {
+		wait 0.03
+		GameTick
+	}
+}

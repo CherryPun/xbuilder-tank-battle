@@ -1,0 +1,104 @@
+onCloned => {
+	id := spawnID
+	hide
+	for {
+		wait 0.03
+		if gameState != 1 || !botAlive[id] {
+			hide
+			continue
+		}
+		show
+		setSize tile * 0.85 / 28
+		setXYpos botX[id], botY[id]
+		dx := playerX - botX[id]
+		dy := playerY - botY[id]
+		if Absf(dx) < tile*0.8 && LineClear(botX[id], botY[id], playerX, playerY) {
+			if dy > 0 {
+				botDir[id] = 0
+				setHeading Up
+			} else {
+				botDir[id] = 2
+				setHeading Down
+			}
+			if tick >= botFireAt[id] {
+				spawnID = id
+				FireShot 2
+				botFireAt[id] = tick + 40
+			}
+			continue
+		}
+		if Absf(dy) < tile*0.8 && LineClear(botX[id], botY[id], playerX, playerY) {
+			if dx > 0 {
+				botDir[id] = 1
+				setHeading Right
+			} else {
+				botDir[id] = 3
+				setHeading Left
+			}
+			if tick >= botFireAt[id] {
+				spawnID = id
+				FireShot 2
+				botFireAt[id] = tick + 40
+			}
+			continue
+		}
+		botMoveTicks[id]--
+		if botMoveTicks[id] <= 0 {
+			botDir[id] = int(rand(0, 3))
+			if Absf(dx) > Absf(dy) {
+				if dx > 0 {
+					botDir[id] = 1
+				} else {
+					botDir[id] = 3
+				}
+			} else {
+				if dy > 0 {
+					botDir[id] = 0
+				} else {
+					botDir[id] = 2
+				}
+			}
+			botMoveTicks[id] = int(rand(8, 20))
+		}
+		sp := tile * 0.12
+		nx := botX[id]
+		ny := botY[id]
+		if botDir[id] == 0 {
+			ny = ny + sp
+			setHeading Up
+		}
+		if botDir[id] == 1 {
+			nx = nx + sp
+			setHeading Right
+		}
+		if botDir[id] == 2 {
+			ny = ny - sp
+			setHeading Down
+		}
+		if botDir[id] == 3 {
+			nx = nx - sp
+			setHeading Left
+		}
+		if BlockedAt(nx, ny) {
+			botDir[id] = int(rand(0, 3))
+			botMoveTicks[id] = int(rand(6, 14))
+		} else {
+			botX[id] = nx
+			botY[id] = ny
+			lim := tile * 0.55
+			if botX[id] < -240+lim {
+				botX[id] = -240 + lim
+			}
+			if botX[id] > 240-lim {
+				botX[id] = 240 - lim
+			}
+			if botY[id] < -180+lim {
+				botY[id] = -180 + lim
+			}
+			if botY[id] > 180-lim {
+				botY[id] = 180 - lim
+			}
+		}
+		setXYpos botX[id], botY[id]
+	}
+}

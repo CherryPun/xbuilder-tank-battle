@@ -1,0 +1,144 @@
+{
+  "backdrops": [],
+  "backdropIndex": 0,
+  "map": {
+    "width": 480,
+    "height": 360,
+    "mode": "fillRatio"
+  },
+  "physics": false,
+  "layerSortMode": "",
+  "autoSetCollisionLayer": true,
+  "stretchMode": true,
+  "audioAttenuation": 1,
+  "audioMaxDistance": 768,
+  "run": {
+    "width": 480,
+    "height": 360
+  },
+  "camera": {
+    "on": ""
+  },
+  "zorder": [
+    "Field",
+    "Tank",
+    "Bot",
+    "Item",
+    "Bullet",
+    "Radar",
+    "Blip",
+    {
+      "type": "monitor",
+      "name": "m-score",
+      "x": -232,
+      "y": 172,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-score",
+      "label": "分数",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "score"
+    },
+    {
+      "type": "monitor",
+      "name": "m-bots",
+      "x": -150,
+      "y": 172,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-bots",
+      "label": "人机",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "botsAlive"
+    },
+    {
+      "type": "monitor",
+      "name": "m-mode",
+      "x": -68,
+      "y": 172,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-mode",
+      "label": "模式",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "modeText"
+    },
+    {
+      "type": "monitor",
+      "name": "m-players",
+      "x": 20,
+      "y": 172,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-players",
+      "label": "人数",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "playersText"
+    },
+    {
+      "type": "monitor",
+      "name": "m-type",
+      "x": 110,
+      "y": 172,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-type",
+      "label": "类型",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "typeText"
+    },
+    {
+      "type": "monitor",
+      "name": "m-ammo",
+      "x": -232,
+      "y": 146,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-ammo",
+      "label": "装备",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "ammoText"
+    },
+    {
+      "type": "monitor",
+      "name": "m-status",
+      "x": -232,
+      "y": -172,
+      "size": 0.65,
+      "visible": true,
+      "builder_id": "ztb-m-status",
+      "label": "状态",
+      "mode": 1,
+      "style": "default",
+      "target": "",
+      "val": "statusText"
+    }
+  ],
+  "builder_spriteOrder": [
+    "qe6osjk4pjg05sz4tpucd",
+    "vs90exl51c8d3h1wsibdm",
+    "p0qwj2epwfglw95ptc6b8",
+    "3h8i9qvmlqe5h38bb66c",
+    "8al0ugwwn6w30y2eabts",
+    "pezfxwsfxfloal4ws30e7",
+    "z2cb63uycewxubaay9hia"
+  ],
+  "builder_soundOrder": [],
+  "maxFPS": 60,
+  "fontPreferences": [
+    "basic-chinese",
+    "default"
+  ]
+}

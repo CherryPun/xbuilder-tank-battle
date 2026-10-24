@@ -1,0 +1,36 @@
+onCloned => {
+	id := spawnID
+	hide
+	for {
+		wait 0.05
+		if gameState != 1 {
+			hide
+			continue
+		}
+		if id == 0 {
+			setCostume 0
+			show
+			setXYpos 186 + playerX/240*38, -132 + playerY/180*26
+			continue
+		}
+		if id < 8 {
+			s := id - 1
+			if botAlive[s] {
+				setCostume 1
+				show
+				setXYpos 186 + botX[s]/240*38, -132 + botY[s]/180*26
+			} else {
+				hide
+			}
+			continue
+		}
+		k := id - 8
+		if itemAlive[k] {
+			setCostume 2
+			show
+			setXYpos 186 + itemX[k]/240*38, -132 + itemY[k]/180*26
+		} else {
+			hide
+		}
+	}
+}

@@ -1,0 +1,196 @@
+onStart => {
+	hide
+	for {
+		wait 0.03
+		if gameState != 1 {
+			hide
+			continue
+		}
+		show
+		setSize tile * 0.85 / 28
+		vx := 0.0
+		vy := 0.0
+		if keyPressed(KeyLeft) || keyPressed(KeyA) {
+			vx = -1
+		}
+		if keyPressed(KeyRight) || keyPressed(KeyD) {
+			vx = 1
+		}
+		if keyPressed(KeyUp) || keyPressed(KeyW) {
+			vy = 1
+		}
+		if keyPressed(KeyDown) || keyPressed(KeyS) {
+			vy = -1
+		}
+		sp := tile * 0.15
+		if playerType == 1 {
+			sp = tile * 0.3
+		}
+		if playerType == 2 {
+			sp = tile * 0.075
+		}
+		if vx != 0 || vy != 0 {
+			if vx == 0 && vy > 0 {
+				playerDir = 0
+				setHeading Up
+			}
+			if vx > 0 && vy > 0 {
+				playerDir = 4
+				setHeading 45
+			}
+			if vx > 0 && vy == 0 {
+				playerDir = 1
+				setHeading Right
+			}
+			if vx > 0 && vy < 0 {
+				playerDir = 5
+				setHeading 135
+			}
+			if vx == 0 && vy < 0 {
+				playerDir = 2
+				setHeading Down
+			}
+			if vx < 0 && vy < 0 {
+				playerDir = 6
+				setHeading -135
+			}
+			if vx < 0 && vy == 0 {
+				playerDir = 3
+				setHeading Left
+			}
+			if vx < 0 && vy > 0 {
+				playerDir = 7
+				setHeading -45
+			}
+			nx := playerX + vx*sp
+			if !BlockedAt(nx, playerY) {
+				playerX = nx
+			}
+			ny := playerY + vy*sp
+			if !BlockedAt(playerX, ny) {
+				playerY = ny
+			}
+			lim := tile * 0.55
+			if playerX < -240+lim {
+				playerX = -240 + lim
+			}
+			if playerX > 240-lim {
+				playerX = 240 - lim
+			}
+			if playerY < -180+lim {
+				playerY = -180 + lim
+			}
+			if playerY > 180-lim {
+				playerY = 180 - lim
+			}
+		}
+		setXYpos playerX, playerY
+		for i := 0; i < 4; i++ {
+			if itemAlive[i] {
+				if Absf(playerX-itemX[i]) < tile*0.7 && Absf(playerY-itemY[i]) < tile*0.7 {
+					ApplyItem(itemType[i])
+					itemAlive[i] = false
+				}
+			}
+		}
+	}
+}
+
+onKey Key1, => {
+	if gameState == 0 {
+		playerType = 0
+		UpdateTexts
+	}
+}
+
+onKey Key2, => {
+	if gameState == 0 {
+		playerType = 1
+		UpdateTexts
+	}
+}
+
+onKey Key3, => {
+	if gameState == 0 {
+		playerType = 2
+		UpdateTexts
+	}
+}
+
+onKey KeyC, => {
+	if gameState == 0 {
+		if mode == 0 {
+			mode = 1
+		} else {
+			mode = 0
+		}
+		UpdateTexts
+	}
+}
+
+onKey KeyX, => {
+	if gameState == 0 {
+		if players == 2 {
+			players = 4
+		} else if players == 4 {
+			players = 8
+		} else {
+			players = 2
+		}
+		UpdateTexts
+	}
+}
+
+onKey KeySpace, => {
+	if gameState == 0 {
+		StartGame
+	} else if gameState == 2 {
+		gameState = 0
+		MenuText
+		UpdateTexts
+	} else {
+		FireShot 1
+	}
+}
+
+onKey KeyJ, => {
+	if gameState == 1 {
+		FireShot 1
+	}
+}
+
+onKey KeyUp, => {
+	if gameState == 0 {
+		KonamiStep 0
+	}
+}
+
+onKey KeyDown, => {
+	if gameState == 0 {
+		KonamiStep 2
+	}
+}
+
+onKey KeyLeft, => {
+	if gameState == 0 {
+		KonamiStep 3
+	}
+}
+
+onKey KeyRight, => {
+	if gameState == 0 {
+		KonamiStep 1
+	}
+}
+
+onKey KeyB, => {
+	if gameState == 0 {
+		KonamiStep 4
+	}
+}
+
+onKey KeyA, => {
+	if gameState == 0 {
+		KonamiStep 5
+	}
+}
