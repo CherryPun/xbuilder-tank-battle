@@ -8,7 +8,7 @@ onCloned => {
 			continue
 		}
 		show
-		setSize tile * 0.85 / 28
+		setSize tile * 0.95 / 28
 		setXYpos botX[id], botY[id]
 		dx := playerX - botX[id]
 		dy := playerY - botY[id]

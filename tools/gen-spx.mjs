@@ -300,32 +300,10 @@ func PickSpot(minDist float64) bool {
 }
 
 func StartGame() {
-	if players == 2 {
-		level = 0
-	}
-	if players == 4 {
-		level = 1
-	}
-	if players == 8 {
-		level = 2
-	}
-	tile = 24
-	if level == 1 {
-		tile = 12
-	}
-	if level == 2 {
-		tile = 8
-	}
-	cols = 20
-	rows = 15
-	if level == 1 {
-		cols = 40
-		rows = 30
-	}
-	if level == 2 {
-		cols = 60
-		rows = 45
-	}
+	level = 1
+	tile = 12
+	cols = 40
+	rows = 30
 
 	if playerType == 0 {
 		maxHP = 1
@@ -643,7 +621,7 @@ const tankSpx = `onStart => {
 			continue
 		}
 		show
-		setSize tile * 0.85 / 28
+		setSize tile * 0.95 / 28
 		vx := 0.0
 		vy := 0.0
 		if keyPressed(KeyLeft) || keyPressed(KeyA) {
@@ -842,7 +820,7 @@ const botSpx = `onCloned => {
 			continue
 		}
 		show
-		setSize tile * 0.85 / 28
+		setSize tile * 0.95 / 28
 		setXYpos botX[id], botY[id]
 		dx := playerX - botX[id]
 		dy := playerY - botY[id]
@@ -1080,7 +1058,7 @@ const itemSpx = `onCloned => {
 		}
 		show
 		setCostume itemType[id]
-		setSize tile * 0.55 / 22
+		setSize tile * 0.8 / 22
 		setXYpos itemX[id], itemY[id]
 	}
 }
@@ -1159,7 +1137,6 @@ const bulletSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" 
 </svg>
 `;
 
-const FIELD_ID = id();
 const TANK_ID = id();
 const BOT_ID = id();
 const BULLET_ID = id();
@@ -1218,7 +1195,18 @@ const monitor = (name, label, val, x, y) => ({
 
 const stageJson = JSON.stringify(
   {
-    backdrops: [],
+    backdrops: [
+      {
+        x: 240,
+        y: 180,
+        bitmapResolution: 1,
+        name: 'arena',
+        path: 'arena.svg',
+        builder_id: id(),
+        imageWidth: 480,
+        imageHeight: 360,
+      },
+    ],
     backdropIndex: 0,
     map: { width: 480, height: 360, mode: 'fillRatio' },
     physics: false,
@@ -1230,7 +1218,6 @@ const stageJson = JSON.stringify(
     run: { width: 480, height: 360 },
     camera: { on: '' },
     zorder: [
-      'Field',
       'Tank',
       'Bot',
       'Item',
@@ -1245,7 +1232,7 @@ const stageJson = JSON.stringify(
       monitor('m-ammo', '装备', 'ammoText', -232, 146),
       monitor('m-status', '状态', 'statusText', -232, -172),
     ],
-    builder_spriteOrder: [FIELD_ID, TANK_ID, BOT_ID, ITEM_ID, BULLET_ID, RADAR_ID, BLIP_ID],
+    builder_spriteOrder: [TANK_ID, BOT_ID, ITEM_ID, BULLET_ID, RADAR_ID, BLIP_ID],
     builder_soundOrder: [],
     maxFPS: 60,
     fontPreferences: ['basic-chinese', 'default'],
@@ -1264,27 +1251,12 @@ write('main.spx', mainSpx);
 write('Tank.spx', tankSpx);
 write('Bot.spx', botSpx);
 write('Bullet.spx', bulletSpx);
-write('Field.spx', fieldSpx);
 write('Radar.spx', radarSpx);
 write('Blip.spx', blipSpx);
 write('Item.spx', itemSpx);
 write('builder-meta.json', meta);
 write('assets/index.json', stageJson);
-write('assets/sprites/Field/index.json', spriteJson({
-  heading: 0,
-  x: 0,
-  y: 0,
-  visible: true,
-  builderId: FIELD_ID,
-  costumes: [
-    { name: 'map-1v1', path: 'map-1v1.svg', w: 480, h: 360 },
-    { name: 'map-4p', path: 'map-4p.svg', w: 480, h: 360 },
-    { name: 'map-8p', path: 'map-8p.svg', w: 480, h: 360 },
-  ],
-}));
-write('assets/sprites/Field/map-1v1.svg', fieldSvg(0));
-write('assets/sprites/Field/map-4p.svg', fieldSvg(1));
-write('assets/sprites/Field/map-8p.svg', fieldSvg(2));
+write('assets/arena.svg', fieldSvg(1));
 write('assets/sprites/Tank/index.json', spriteJson({ heading: 90, x: -204, y: -132, visible: false, builderId: TANK_ID, costumes: [{ name: 'tank', path: 'tank.svg', w: 28, h: 28 }] }));
 write('assets/sprites/Tank/tank.svg', tankSvg);
 write('assets/sprites/Bot/index.json', spriteJson({ heading: 90, x: 0, y: 0, visible: false, builderId: BOT_ID, costumes: [{ name: 'bot', path: 'bot.svg', w: 28, h: 28 }] }));

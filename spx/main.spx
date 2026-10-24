@@ -281,32 +281,10 @@ func PickSpot(minDist float64) bool {
 }
 
 func StartGame() {
-	if players == 2 {
-		level = 0
-	}
-	if players == 4 {
-		level = 1
-	}
-	if players == 8 {
-		level = 2
-	}
-	tile = 24
-	if level == 1 {
-		tile = 12
-	}
-	if level == 2 {
-		tile = 8
-	}
-	cols = 20
-	rows = 15
-	if level == 1 {
-		cols = 40
-		rows = 30
-	}
-	if level == 2 {
-		cols = 60
-		rows = 45
-	}
+	level = 1
+	tile = 12
+	cols = 40
+	rows = 30
 
 	if playerType == 0 {
 		maxHP = 1
