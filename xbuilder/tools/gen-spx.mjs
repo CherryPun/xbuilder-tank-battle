@@ -234,7 +234,7 @@ func StartGame() {
 		damage = 1
 	}
 	if playerType == 1 {
-		maxHP = 2
+		maxHP = 1
 		damage = 0.5
 	}
 	if playerType == 2 {

@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "sili7oifupkzgi9dt7fec",
+  "builder_id": "6n1ftruz8jnu9csuhwsr",
   "costumes": [
     {
       "x": 14,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "tank",
       "path": "tank.svg",
-      "builder_id": "o9ar3ar9kwt7w1myp3jrs",
+      "builder_id": "p9s0bn15hcs2gyreq1dhr",
       "imageWidth": 28,
       "imageHeight": 28
     }

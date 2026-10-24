@@ -200,10 +200,10 @@ assert.deepEqual(
   [1, 1, 120],
   'balance preset'
 );
-assert.deepEqual([speeder.maxHp, speeder.damage, speeder.speed()], [2, 0.5, 240], 'speed preset');
+assert.deepEqual([speeder.maxHp, speeder.damage, speeder.speed()], [1, 0.5, 240], 'speed preset');
 assert.deepEqual([tanky.maxHp, tanky.damage, tanky.speed()], [2, 1, 60], 'defense preset');
 assert.equal(Math.ceil(tanky.maxHp / balance.damage), 2, 'balance kills defense in 2 hits');
-assert.equal(Math.ceil(speeder.maxHp / balance.damage), 2, 'balance kills speed in 2 hits');
+assert.equal(Math.ceil(speeder.maxHp / balance.damage), 1, 'balance kills speed in 1 hit');
 assert.equal(Math.ceil(tanky.maxHp / speeder.damage), 4, 'speed kills defense in 4 hits');
 
 const botTank = new Tank(0, 0, { type: 'balance', speed: 96 });
