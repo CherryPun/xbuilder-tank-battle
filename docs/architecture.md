@@ -7,7 +7,7 @@
 | 实现 | 位置 | 用途 |
 | --- | --- | --- |
 | 网页版（原生 JS + Canvas） | 仓库根目录 | 本地/云端浏览器演示，规则最完整，便于快速迭代 |
-| XBuilder / SPX 版 | `spx/`（由 `tools/gen-spx.mjs` 生成） | 赛题要求的 XBuilder 内可运行版本 |
+| XBuilder / SPX 版 | `xbuilder/spx/`（由 `xbuilder/tools/gen-spx.mjs` 生成），成品 `xbuilder/xbuilder-tank-battle.xbp` | 赛题要求的 XBuilder 内可运行版本 |
 
 两份实现共享同一套玩法数值（坦克类型、装备、刷新节奏、地图尺寸），但受平台能力限制存在少量差异，见第 6 节。
 
@@ -40,8 +40,8 @@ SPX 以「精灵 + 脚本 + 素材」为组织方式，全局状态集中在 `ma
 | `Bullet.spx` | 子弹（玩家/人机共用） | 逐帧位移、撞墙按轴反弹（`shotBounces` 次）、命中判定与伤害结算 |
 | 舞台背景 `assets/arena.svg` | 迷宫背景 | backdrop 直接铺满 480×360 舞台，避免精灵缩放导致错位 |
 | `Radar.spx` + `Blip.spx` | 小地图 | 面板 + 12 个光点（玩家/人机/装备）按世界坐标等比映射 |
-| `tools/gen-spx.mjs` | 工程生成器 | 生成地图 SVG（与碰撞公式同源）、精灵 `index.json`、`.spx` 脚本 |
-| `tools/pack-xbp.ps1` | 打包 | 将 `spx/` 以正斜杠路径压成 `.xbp` |
+| `xbuilder/tools/gen-spx.mjs` | 工程生成器 | 生成地图 SVG（与碰撞公式同源）、精灵 `index.json`、`.spx` 脚本 |
+| `xbuilder/tools/pack-xbp.ps1` | 打包 | 将 `spx/` 以正斜杠路径压成 `.xbp` |
 
 XBuilder 版本的项目文件由生成器统一产出，避免「贴图与碰撞各写一套」导致的不一致：`IsWallCell` 与 SVG 使用同一个网格与哈希公式。
 

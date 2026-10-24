@@ -2,12 +2,19 @@
 
 经典坦克大战的现代重制：一发致命、子弹反弹、每 15 秒刷新随机装备，支持 1v1 / 4 人混战 / 8 人混战，以及经典与人机无限刷新的肉鸽模式。纯前端 Canvas 实现，零依赖。
 
-仓库同时包含 XBuilder（SPX）版本，源码在 `spx/`，由 `tools/gen-spx.mjs` 生成并打包为 `.xbp` 导入 XBuilder。架构与模块规格见 [docs/architecture.md](docs/architecture.md)。
+仓库按两份实现分目录：
+
+| 目录 | 版本 | 说明 |
+| --- | --- | --- |
+| 根目录（`index.html`、`src/`） | 网页版（推荐） | 功能最完整：三种坦克、六种装备、八方向移动、镜头跟随、小地图、彩蛋 |
+| `xbuilder/` | XBuilder 版 | SPX 3.3.0 工程源码 + 可直接导入的 `.xbp`；为保证稳定移除了装备系统 |
+
+架构与模块规格见 [docs/architecture.md](docs/architecture.md)。
 
 ## XBuilder 版
 
-1. 运行 `node tools/gen-spx.mjs` 生成 `spx/`，再用仓库脚本打 zip 包得到 `.xbp`（或直接使用已打好的 `.xbp`）。
-2. 在 XBuilder 中选择导入 `.xbp`，项目名与仓库同名。
+1. 直接用 XBuilder 导入 `xbuilder/xbuilder-tank-battle.xbp`；若改动源码，运行 `node xbuilder/tools/gen-spx.mjs` 重新生成 `xbuilder/spx/`，再执行 `powershell -File xbuilder/tools/pack-xbp.ps1` 打包。
+2. 项目名建议与仓库同名。
 3. 菜单按键：`1/2/3` 选坦克类型，`C` 切经典/肉鸽，`X` 切 1v1/4人/8人，`空格` 开始；对局中 `WASD`/方向键移动，`J`/`空格` 开火。
 4. 彩蛋：在菜单输入 `↑↑↓↓←→←→ B A B A` 切换无敌模式。
 5. XBuilder 版地图固定为 4 人尺寸（40×30 格，480×360），背景用舞台 backdrop，保证贴图与碰撞一致。

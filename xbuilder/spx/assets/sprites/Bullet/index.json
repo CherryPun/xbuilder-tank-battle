@@ -16,18 +16,18 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "9c2s01w3mexegbzlmm2zc",
+  "builder_id": "95bb38jchklmj6cbq0skn",
   "costumes": [
     {
-      "x": 14,
-      "y": 14,
+      "x": 4,
+      "y": 4,
       "faceRight": 0,
       "bitmapResolution": 1,
-      "name": "bot",
-      "path": "bot.svg",
-      "builder_id": "3n04k4rq2azrx95tmz2a",
-      "imageWidth": 28,
-      "imageHeight": 28
+      "name": "bullet",
+      "path": "bullet.svg",
+      "builder_id": "acnq72pelrezs85gpc3nn",
+      "imageWidth": 8,
+      "imageHeight": 8
     }
   ]
 }
