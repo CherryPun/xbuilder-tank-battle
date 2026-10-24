@@ -5,8 +5,8 @@ const ROOT = 'D:/xbuilder-tank-battle/spx';
 
 const LEVELS = [
   { cols: 20, rows: 15, tile: 24 },
-  { cols: 30, rows: 22, tile: 16 },
   { cols: 40, rows: 30, tile: 12 },
+  { cols: 60, rows: 45, tile: 8 },
 ];
 
 const write = (rel, content) => {
@@ -311,20 +311,20 @@ func StartGame() {
 	}
 	tile = 24
 	if level == 1 {
-		tile = 16
+		tile = 12
 	}
 	if level == 2 {
-		tile = 12
+		tile = 8
 	}
 	cols = 20
 	rows = 15
 	if level == 1 {
-		cols = 30
-		rows = 22
-	}
-	if level == 2 {
 		cols = 40
 		rows = 30
+	}
+	if level == 2 {
+		cols = 60
+		rows = 45
 	}
 
 	if playerType == 0 {

@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "3h8i9qvmlqe5h38bb66c",
+  "builder_id": "p3d7bhgs27377nype3kjf",
   "costumes": [
     {
       "x": 11,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "laser",
       "path": "laser.svg",
-      "builder_id": "uunpgpz9x2seju50x07x",
+      "builder_id": "ipq2uzj7df07d6ytnvffr",
       "imageWidth": 22,
       "imageHeight": 22
     },
@@ -36,7 +36,7 @@
       "bitmapResolution": 1,
       "name": "pierce",
       "path": "pierce.svg",
-      "builder_id": "7ylcr5g5pr7gaoxjk3zi2",
+      "builder_id": "tpdp0fi2mr3q9ft80yomc",
       "imageWidth": 22,
       "imageHeight": 22
     },
@@ -47,7 +47,7 @@
       "bitmapResolution": 1,
       "name": "shotgun",
       "path": "shotgun.svg",
-      "builder_id": "8sqhf616lbhyy7yhi682e",
+      "builder_id": "7qgw8u72dyb5ill2s341e",
       "imageWidth": 22,
       "imageHeight": 22
     },
@@ -58,7 +58,7 @@
       "bitmapResolution": 1,
       "name": "rapid",
       "path": "rapid.svg",
-      "builder_id": "vq1ja57tdrrjufojoek4",
+      "builder_id": "x6zjgnjv2et0f9y72vuum",
       "imageWidth": 22,
       "imageHeight": 22
     },
@@ -69,7 +69,7 @@
       "bitmapResolution": 1,
       "name": "shield",
       "path": "shield.svg",
-      "builder_id": "v5rmbhbw25pb97ji1slm",
+      "builder_id": "vq8ge1okenfnum8vqz3bk",
       "imageWidth": 22,
       "imageHeight": 22
     },
@@ -80,7 +80,7 @@
       "bitmapResolution": 1,
       "name": "thorns",
       "path": "thorns.svg",
-      "builder_id": "elr2bfh4t63paa6nkfudr",
+      "builder_id": "f3ypb1x4lqj5nu0ahl0k",
       "imageWidth": 22,
       "imageHeight": 22
     }

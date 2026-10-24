@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "qe6osjk4pjg05sz4tpucd",
+  "builder_id": "1o5z8wv9pjvly2axfhza",
   "costumes": [
     {
       "x": 240,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "map-1v1",
       "path": "map-1v1.svg",
-      "builder_id": "h021gq0ti0bow3ah46l4f",
+      "builder_id": "8v0n8m141tcu1enxzyqhm",
       "imageWidth": 480,
       "imageHeight": 360
     },
@@ -36,7 +36,7 @@
       "bitmapResolution": 1,
       "name": "map-4p",
       "path": "map-4p.svg",
-      "builder_id": "e1ua241yk5cxl48tgk6h",
+      "builder_id": "kvaps3v4kz94nwbv5c4k7",
       "imageWidth": 480,
       "imageHeight": 360
     },
@@ -47,7 +47,7 @@
       "bitmapResolution": 1,
       "name": "map-8p",
       "path": "map-8p.svg",
-      "builder_id": "n3xdknerck5u4zj6fnkpg",
+      "builder_id": "3too7y9zwjnmgkc6z9bwe",
       "imageWidth": 480,
       "imageHeight": 360
     }
