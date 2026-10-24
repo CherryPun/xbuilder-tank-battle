@@ -7,7 +7,7 @@ onStart => {
 			continue
 		}
 		show
-		setSize tile * 0.85 / 28
+		setSize tile * 0.95 / 28
 		vx := 0.0
 		vy := 0.0
 		if keyPressed(KeyLeft) || keyPressed(KeyA) {

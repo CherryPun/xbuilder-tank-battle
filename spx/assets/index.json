@@ -1,5 +1,16 @@
 {
-  "backdrops": [],
+  "backdrops": [
+    {
+      "x": 240,
+      "y": 180,
+      "bitmapResolution": 1,
+      "name": "arena",
+      "path": "arena.svg",
+      "builder_id": "knlxlsx1okkbnq1qxb4l",
+      "imageWidth": 480,
+      "imageHeight": 360
+    }
+  ],
   "backdropIndex": 0,
   "map": {
     "width": 480,
@@ -20,7 +31,6 @@
     "on": ""
   },
   "zorder": [
-    "Field",
     "Tank",
     "Bot",
     "Item",
@@ -127,13 +137,12 @@
     }
   ],
   "builder_spriteOrder": [
-    "1o5z8wv9pjvly2axfhza",
-    "smbdv8ycnxmkanv59h96j",
-    "0uciuguhi20ctn9wd3nax",
-    "p3d7bhgs27377nype3kjf",
-    "fvwoo10rgu8y5prp69p3f",
-    "9ptqrbjrl1nzmiy5rhhhf",
-    "wbv8gsloxndq28tktq2ds"
+    "hc6gt5rh95ezkdraa1vv8",
+    "kln0z87ratq6dsk69wif",
+    "4bmb6abshvsv4lryxxfv",
+    "np7f20sjv6ub3z27562qh",
+    "qhkalqikkhn3xbesxt32",
+    "19v9uzptlll6n784tgyn"
   ],
   "builder_soundOrder": [],
   "maxFPS": 60,

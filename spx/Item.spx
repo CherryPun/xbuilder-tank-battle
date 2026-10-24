@@ -9,7 +9,7 @@ onCloned => {
 		}
 		show
 		setCostume itemType[id]
-		setSize tile * 0.55 / 22
+		setSize tile * 0.8 / 22
 		setXYpos itemX[id], itemY[id]
 	}
 }
