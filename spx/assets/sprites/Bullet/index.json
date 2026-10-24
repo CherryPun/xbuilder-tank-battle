@@ -16,7 +16,7 @@
   "collisionShapeParams": [],
   "fAnimations": {},
   "animBindings": {},
-  "builder_id": "np7f20sjv6ub3z27562qh",
+  "builder_id": "7j2igv82f627zowsbcx9s",
   "costumes": [
     {
       "x": 4,
@@ -25,7 +25,7 @@
       "bitmapResolution": 1,
       "name": "bullet",
       "path": "bullet.svg",
-      "builder_id": "p68haem5i8rqr4eewfas9",
+      "builder_id": "8851uyyuz5k0lkvop7i9p",
       "imageWidth": 8,
       "imageHeight": 8
     }

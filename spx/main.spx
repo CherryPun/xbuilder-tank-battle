@@ -32,6 +32,7 @@ var (
 	botsSpawned bool
 	blipsSpawned bool
 	itemsSpawned bool
+	bulletsSpawned bool
 	spawnID     int
 	botRefillAt int
 	itemAt      int
@@ -44,14 +45,15 @@ var (
 	botMoveTicks [8]int
 	botFireAt [8]int
 
-	shotX float64
-	shotY float64
-	shotVx float64
-	shotVy float64
-	shotBounces int
-	shotGhost bool
-	shotDamage float64
-	shotOwner int
+	bulletActive [16]bool
+	bulletX [16]float64
+	bulletY [16]float64
+	bulletVx [16]float64
+	bulletVy [16]float64
+	bulletBounce [16]int
+	bulletGhost [16]bool
+	bulletDmg [16]float64
+	bulletOwner [16]int
 
 	randX float64
 	randY float64
@@ -320,6 +322,9 @@ func StartGame() {
 	for i := 0; i < 4; i++ {
 		itemAlive[i] = false
 	}
+	for i := 0; i < 16; i++ {
+		bulletActive[i] = false
+	}
 	UpdateAmmo
 
 	for i := 0; i < 8; i++ {
@@ -398,10 +403,33 @@ func DamagePlayer(d float64) {
 	}
 }
 
+func SpawnBullet(owner int, x, y, vx, vy float64, bounces int, ghost bool, dmg float64) {
+	for i := 0; i < 16; i++ {
+		if !bulletActive[i] {
+			bulletActive[i] = true
+			bulletX[i] = x
+			bulletY[i] = y
+			bulletVx[i] = vx
+			bulletVy[i] = vy
+			bulletBounce[i] = bounces
+			bulletGhost[i] = ghost
+			bulletDmg[i] = dmg
+			bulletOwner[i] = owner
+			return
+		}
+	}
+}
+
 func FireShot(owner int) {
 	if gameState != 1 {
 		return
 	}
+	ox := 0.0
+	oy := 0.0
+	bounces := 0
+	ghost := false
+	dmg := 1.0
+	speed := tile * 0.36
 	if owner == 1 {
 		gap := 33
 		if ammoType == 3 {
@@ -411,88 +439,78 @@ func FireShot(owner int) {
 			return
 		}
 		lastShot = tick
-		shotX = playerX
-		shotY = playerY
-		shotDamage = damage
-		shotBounces = 4
-		shotGhost = false
+		ox = playerX
+		oy = playerY
+		bounces = 4
+		dmg = damage
 		if ammoType == 1 {
-			shotBounces = 4
-			shotDamage = damage * 2
+			dmg = damage * 2
 		}
 		if ammoType == 2 {
-			shotBounces = 6
+			bounces = 6
+			speed = tile * 0.32
 		}
 		if ammoType == 4 {
-			shotGhost = true
-			shotDamage = damage * 2
+			ghost = true
+			bounces = 0
+			dmg = damage * 2
 		}
 		if ammoLeft > 0 {
 			ammoLeft--
 			if ammoLeft <= 0 {
 				ammoType = 0
 			}
+			UpdateAmmo
 		}
 	} else {
-		shotX = botX[spawnID]
-		shotY = botY[spawnID]
-		shotDamage = 1
-		shotBounces = 0
-		shotGhost = false
+		ox = botX[spawnID]
+		oy = botY[spawnID]
+		speed = tile * 0.3
 	}
-	shotOwner = owner
-	shotVx = tile * 0.36
-	shotVy = 0
+	vx := 0.0
+	vy := 0.0
 	if owner == 1 {
 		if playerDir == 0 {
-			shotVx = 0
-			shotVy = tile * 0.36
+			vy = speed
 		}
 		if playerDir == 1 {
-			shotVx = tile * 0.36
-			shotVy = 0
+			vx = speed
 		}
 		if playerDir == 2 {
-			shotVx = 0
-			shotVy = -tile * 0.36
+			vy = -speed
 		}
 		if playerDir == 3 {
-			shotVx = -tile * 0.36
-			shotVy = 0
+			vx = -speed
 		}
 		if playerDir == 4 {
-			shotVx = tile * 0.25
-			shotVy = tile * 0.25
+			vx = speed * 0.7
+			vy = speed * 0.7
 		}
 		if playerDir == 5 {
-			shotVx = tile * 0.25
-			shotVy = -tile * 0.25
+			vx = speed * 0.7
+			vy = -speed * 0.7
 		}
 		if playerDir == 6 {
-			shotVx = -tile * 0.25
-			shotVy = -tile * 0.25
+			vx = -speed * 0.7
+			vy = -speed * 0.7
 		}
 		if playerDir == 7 {
-			shotVx = -tile * 0.25
-			shotVy = tile * 0.25
+			vx = -speed * 0.7
+			vy = speed * 0.7
 		}
 	} else {
 		d := botDir[spawnID]
 		if d == 0 {
-			shotVx = 0
-			shotVy = tile * 0.3
+			vy = speed
 		}
 		if d == 1 {
-			shotVx = tile * 0.3
-			shotVy = 0
+			vx = speed
 		}
 		if d == 2 {
-			shotVx = 0
-			shotVy = -tile * 0.3
+			vy = -speed
 		}
 		if d == 3 {
-			shotVx = -tile * 0.3
-			shotVy = 0
+			vx = -speed
 		}
 	}
 	if owner == 1 && ammoType == 2 {
@@ -511,13 +529,11 @@ func FireShot(owner int) {
 			py = -1
 		}
 		for k := -1; k <= 1; k++ {
-			shotX = playerX + px*float64(k)*tile*0.28
-			shotY = playerY + py*float64(k)*tile*0.28
-			Bullet.clone
+			SpawnBullet 1, ox+px*float64(k)*tile*0.28, oy+py*float64(k)*tile*0.28, vx, vy, bounces, ghost, dmg
 		}
 		return
 	}
-	Bullet.clone
+	SpawnBullet owner, ox, oy, vx, vy, bounces, ghost, dmg
 }
 
 func RefillBots() {
@@ -585,6 +601,13 @@ onStart => {
 			Item.clone
 		}
 		itemsSpawned = true
+	}
+	if !bulletsSpawned {
+		for i := 0; i < 16; i++ {
+			spawnID = i
+			Bullet.clone
+		}
+		bulletsSpawned = true
 	}
 	for {
 		wait 0.03
